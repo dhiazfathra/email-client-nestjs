@@ -1,3 +1,10 @@
+# 1.0.0 (2025-06-20)
+
+
+### Features
+
+* init email client with auth, monitoring, & test ([#1](https://github.com/dhiazfathra/email-client-nestjs/issues/1)) ([b2b874f](https://github.com/dhiazfathra/email-client-nestjs/commit/b2b874f7732a5e75735dd8daf4b344532328d6f9))
+
 # [1.11.0](https://github.com/dhiazfathra/email-client-nestjs/compare/v1.10.0...v1.11.0) (2025-06-19)
 
 
