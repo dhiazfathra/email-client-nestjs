@@ -1,6 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Email } from '@prisma/client';
+import DOMPurify from 'dompurify';
 import * as IMAP from 'imap';
+import { JSDOM } from 'jsdom';
 import { simpleParser } from 'mailparser';
 import * as nodemailer from 'nodemailer';
 import * as POP3Client from 'poplib';
@@ -112,6 +114,9 @@ export class EmailService {
       },
     });
 
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+
     // Send the email
     try {
       const mailOptions = {
@@ -121,7 +126,7 @@ export class EmailService {
         bcc: emailData.bcc?.join(','),
         subject: emailData.subject,
         text: emailData.text,
-        html: emailData.html,
+        html: purify.sanitize(emailData.html),
       };
 
       await transporter.sendMail(mailOptions);

@@ -16,6 +16,16 @@ jest.mock('nodemailer', () => {
   };
 });
 
+// Mock DOMPurify
+jest.mock('dompurify', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => ({
+      sanitize: jest.fn((html) => html),
+    })),
+  };
+});
+
 // Get the mocked functions for use in tests
 const nodemailer = jest.requireMock('nodemailer');
 const mockCreateTransport = nodemailer.createTransport;
