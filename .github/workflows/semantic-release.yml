@@ -1,0 +1,99 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'prisma/**/*.ts'
+      - 'prisma/**/*.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.releaserc.json'
+      - 'CHANGELOG.md'
+      - '.github/workflows/semantic-release.yml'
+
+# Limit concurrent runs of the same workflow
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-lts-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-lts-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # Cache Jest
+      - name: Cache Jest
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache/jest
+          key: ${{ runner.os }}-jest-${{ hashFiles('**/jest.config.js') }}-${{ hashFiles('**/*.spec.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-jest-
+
+      - name: Run tests
+        run: npm test
+
+      # Cache build output
+      - name: Cache build
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
+      - name: Build
+        run: npm run build
+
+      # Cache semantic-release
+      - name: Cache semantic-release
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache/semantic-release
+          key: ${{ runner.os }}-semantic-release-${{ hashFiles('.releaserc.json') }}
+
+      - name: Disable husky hooks for CI
+        run: |
+          chmod +x .github/workflows/disable-husky-for-ci.sh
+          .github/workflows/disable-husky-for-ci.sh
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUSKY: 0
+        run: npx semantic-release --no-ci

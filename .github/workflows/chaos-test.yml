@@ -1,0 +1,130 @@
+name: Chaos Testing
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'prisma/**/*.ts'
+      - 'prisma/**/*.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/chaos-test.yml'
+      - 'docker-compose.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'prisma/**/*.ts'
+      - 'prisma/**/*.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/chaos-test.yml'
+      - 'docker-compose.yml'
+  workflow_dispatch:
+    inputs:
+      redis_failure_probability:
+        description: 'Redis failure probability (0-1)'
+        required: true
+        default: '0.3'
+        type: string
+
+jobs:
+  chaos-test:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application in background
+        run: |
+          npm run start:prod &
+          sleep 10
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_SECRET: test-secret
+
+      - name: Run chaos tests
+        run: |
+          # Create test user with admin role
+          curl -X POST http://localhost:3000/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@example.com","password":"Password123!","name":"Admin User"}'
+
+          # Login to get JWT token
+          TOKEN=$(curl -X POST http://localhost:3000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@example.com","password":"Password123!"}' \
+            | jq -r '.access_token')
+
+          # Set Redis failure probability
+          PROBABILITY="${{ github.event.inputs.redis_failure_probability || '0.3' }}"
+          curl -X POST http://localhost:3000/api/chaos/set-probability \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d "{\"probability\":$PROBABILITY}"
+
+          # Run a series of API calls to test resilience
+          for i in {1..50}; do
+            # Test various endpoints under chaos conditions
+            curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health || true
+
+            # Add more API calls to test here
+
+            echo "Completed test iteration $i"
+            sleep 1
+          done
+
+          # Get chaos testing status
+          curl -X GET http://localhost:3000/api/chaos/status \
+            -H "Authorization: Bearer $TOKEN"
+
+      - name: Check application logs
+        run: |
+          # Check for error patterns that would indicate resilience issues
+          if grep -q "FATAL ERROR" logs/error.log; then
+            echo "Fatal errors detected during chaos testing"
+            exit 1
+          fi

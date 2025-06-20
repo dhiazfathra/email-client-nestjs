@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Build output
+dist
+build
+coverage
+
+# Development
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Misc
+README.md
+LICENSE
+CHANGELOG.md
+.prettierrc
+.eslintrc.js
+jest.config.js
+temp_backup

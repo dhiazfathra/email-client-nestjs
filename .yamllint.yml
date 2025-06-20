@@ -1,0 +1,67 @@
+---
+# YAMLlint configuration for NestJS starter project
+# See https://yamllint.readthedocs.io/en/stable/configuration.html for details
+
+extends: default
+
+rules:
+  # 80 chars should be enough, but don't fail if a line is longer
+  line-length:
+    max: 120
+    level: warning
+
+  # Allow for more complex document structures
+  document-start: disable
+
+  # Prefer consistent indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Allow for empty lines to improve readability
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 1
+
+  # Enforce consistent key formatting
+  key-duplicates: enable
+  key-ordering: disable
+
+  # Enforce consistent truthy/falsy values
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: false
+
+  # Enforce consistent quoting style
+  # But allow both styles when needed
+  quoted-strings:
+    quote-type: single
+    required: false
+
+  # Allow comments
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+
+  # Enforce consistent brackets
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  # Enforce consistent braces
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  # Enforce consistent commas
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+
+  # Enforce consistent colons
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1

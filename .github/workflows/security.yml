@@ -1,0 +1,196 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'prisma/**/*.ts'
+      - 'prisma/**/*.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/gitleaks.toml'
+      - '.github/workflows/security.yml'
+      - '.eslintrc.js'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.js'
+      - 'prisma/**/*.ts'
+      - 'prisma/**/*.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/gitleaks.toml'
+      - '.github/workflows/security.yml'
+      - '.eslintrc.js'
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly at midnight on Sunday
+
+# Limit concurrent runs of the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  dependency-scan:
+    name: Dependency Scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for faster checkout
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-22.x-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-22.x-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # Dependency vulnerability scanning
+      - name: Run npm audit
+        run: npm audit --production --audit-level=high
+        continue-on-error: true
+
+      # Dependency Review to identify vulnerable dependencies
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        if: github.event_name == 'pull_request'
+
+      # Snyk security scan
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  code-analysis:
+    name: Code Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for faster checkout
+
+      # CodeQL Analysis for JavaScript/TypeScript
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          queries: security-extended,security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+  secret-scanning:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for faster checkout
+
+      # Secret scanning alerts
+      - name: Secret Scanning
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: .github/gitleaks.toml
+          path: .
+        continue-on-error: true
+
+  eslint-security:
+    name: ESLint Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for faster checkout
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-22.x-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-22.x-
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # Cache ESLint results
+      - name: Cache ESLint results
+        uses: actions/cache@v4
+        with:
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
+
+      # Generate ESLint SARIF report for security issues
+      - name: Install ESLint SARIF formatter
+        run: npm install --no-save @microsoft/eslint-formatter-sarif
+
+      - name: Generate ESLint SARIF report
+        run: |
+          npx eslint "{src,apps,libs,test}/**/*.ts" --cache --format @microsoft/eslint-formatter-sarif --output-file eslint-sarif.json || true
+
+      # Upload ESLint SARIF results to GitHub Security tab
+      - name: Upload ESLint SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: eslint-sarif.json
+          wait-for-processing: true
+          category: eslint
