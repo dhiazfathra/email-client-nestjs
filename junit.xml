@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="129" failures="0" errors="0" time="5.416">
+  <testsuite name="MetricsService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.002" tests="7">
+    <testcase classname="MetricsService should be defined" name="MetricsService should be defined" time="0.008">
+    </testcase>
+    <testcase classname="MetricsService constructor should initialize metrics and registry" name="MetricsService constructor should initialize metrics and registry" time="0.002">
+    </testcase>
+    <testcase classname="MetricsService onModuleInit should set default labels" name="MetricsService onModuleInit should set default labels" time="0.004">
+    </testcase>
+    <testcase classname="MetricsService incrementHttpRequestCounter should increment the HTTP request counter with correct labels" name="MetricsService incrementHttpRequestCounter should increment the HTTP request counter with correct labels" time="0.001">
+    </testcase>
+    <testcase classname="MetricsService observeHttpRequestDuration should observe the HTTP request duration with correct labels" name="MetricsService observeHttpRequestDuration should observe the HTTP request duration with correct labels" time="0.001">
+    </testcase>
+    <testcase classname="MetricsService incrementHttpRequestsInProgress should increment the in-progress requests gauge with correct labels" name="MetricsService incrementHttpRequestsInProgress should increment the in-progress requests gauge with correct labels" time="0">
+    </testcase>
+    <testcase classname="MetricsService decrementHttpRequestsInProgress should decrement the in-progress requests gauge with correct labels" name="MetricsService decrementHttpRequestsInProgress should decrement the in-progress requests gauge with correct labels" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="RateLimitGuard" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.063" tests="10">
+    <testcase classname="RateLimitGuard should be defined" name="RateLimitGuard should be defined" time="0.013">
+    </testcase>
+    <testcase classname="RateLimitGuard should allow requests within rate limit" name="RateLimitGuard should allow requests within rate limit" time="0.006">
+    </testcase>
+    <testcase classname="RateLimitGuard should allow requests within rate limit with undefined ip" name="RateLimitGuard should allow requests within rate limit with undefined ip" time="0.002">
+    </testcase>
+    <testcase classname="RateLimitGuard should block requests that exceed rate limit" name="RateLimitGuard should block requests that exceed rate limit" time="0.012">
+    </testcase>
+    <testcase classname="RateLimitGuard should track different IP addresses separately" name="RateLimitGuard should track different IP addresses separately" time="0.001">
+    </testcase>
+    <testcase classname="RateLimitGuard should track different paths separately" name="RateLimitGuard should track different paths separately" time="0.002">
+    </testcase>
+    <testcase classname="RateLimitGuard should handle undefined IP address" name="RateLimitGuard should handle undefined IP address" time="0">
+    </testcase>
+    <testcase classname="RateLimitGuard should reset counter after the time window passes" name="RateLimitGuard should reset counter after the time window passes" time="0.001">
+    </testcase>
+    <testcase classname="RateLimitGuard should handle concurrent requests correctly" name="RateLimitGuard should handle concurrent requests correctly" time="0.005">
+    </testcase>
+    <testcase classname="RateLimitGuard should partially reset the counter for partial time window" name="RateLimitGuard should partially reset the counter for partial time window" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TracingService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.115" tests="10">
+    <testcase classname="TracingService should be defined" name="TracingService should be defined" time="0.012">
+    </testcase>
+    <testcase classname="TracingService constructor should initialize the SDK with correct configuration" name="TracingService constructor should initialize the SDK with correct configuration" time="0.004">
+    </testcase>
+    <testcase classname="TracingService constructor should use default values when config is missing" name="TracingService constructor should use default values when config is missing" time="0.001">
+    </testcase>
+    <testcase classname="TracingService constructor should parse port correctly when provided as a string" name="TracingService constructor should parse port correctly when provided as a string" time="0.003">
+    </testcase>
+    <testcase classname="TracingService constructor should handle port string with protocol or host information" name="TracingService constructor should handle port string with protocol or host information" time="0.002">
+    </testcase>
+    <testcase classname="TracingService constructor should use port directly when provided as a number" name="TracingService constructor should use port directly when provided as a number" time="0.001">
+    </testcase>
+    <testcase classname="TracingService onModuleInit should start the SDK" name="TracingService onModuleInit should start the SDK" time="0.001">
+    </testcase>
+    <testcase classname="TracingService onModuleInit should handle errors when starting the SDK" name="TracingService onModuleInit should handle errors when starting the SDK" time="0.011">
+    </testcase>
+    <testcase classname="TracingService onApplicationShutdown should shutdown the SDK" name="TracingService onApplicationShutdown should shutdown the SDK" time="0.008">
+    </testcase>
+    <testcase classname="TracingService onApplicationShutdown should handle errors when shutting down the SDK" name="TracingService onApplicationShutdown should handle errors when shutting down the SDK" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="CacheService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.111" tests="21">
+    <testcase classname="CacheService should be defined" name="CacheService should be defined" time="0.01">
+    </testcase>
+    <testcase classname="CacheService get should return cached value when found" name="CacheService get should return cached value when found" time="0.003">
+    </testcase>
+    <testcase classname="CacheService get should return undefined when cache key not found" name="CacheService get should return undefined when cache key not found" time="0.003">
+    </testcase>
+    <testcase classname="CacheService get should handle errors and return undefined" name="CacheService get should handle errors and return undefined" time="0.001">
+    </testcase>
+    <testcase classname="CacheService set should set value in cache with ttl" name="CacheService set should set value in cache with ttl" time="0.001">
+    </testcase>
+    <testcase classname="CacheService set should set value in cache without ttl" name="CacheService set should set value in cache without ttl" time="0.001">
+    </testcase>
+    <testcase classname="CacheService set should handle errors when setting cache" name="CacheService set should handle errors when setting cache" time="0.001">
+    </testcase>
+    <testcase classname="CacheService del should delete value from cache" name="CacheService del should delete value from cache" time="0.001">
+    </testcase>
+    <testcase classname="CacheService del should handle errors when deleting from cache" name="CacheService del should handle errors when deleting from cache" time="0.001">
+    </testcase>
+    <testcase classname="CacheService getOrSet should return cached value when found" name="CacheService getOrSet should return cached value when found" time="0.003">
+    </testcase>
+    <testcase classname="CacheService getOrSet should call factory and cache result when key not found" name="CacheService getOrSet should call factory and cache result when key not found" time="0.002">
+    </testcase>
+    <testcase classname="CacheService getOrSet should propagate factory errors" name="CacheService getOrSet should propagate factory errors" time="0.014">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should bypass cache when Redis is disabled" name="CacheService Chaos Testing should bypass cache when Redis is disabled" time="0.001">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should simulate failure based on probability" name="CacheService Chaos Testing should simulate failure based on probability" time="0.001">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should execute factory directly when Redis is disabled" name="CacheService Chaos Testing should execute factory directly when Redis is disabled" time="0">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should initialize chaos probability from config on module init" name="CacheService Chaos Testing should initialize chaos probability from config on module init" time="0.005">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should log warning and skip set operation when Redis is disabled" name="CacheService Chaos Testing should log warning and skip set operation when Redis is disabled" time="0.004">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should log warning and skip delete operation when Redis is disabled" name="CacheService Chaos Testing should log warning and skip delete operation when Redis is disabled" time="0.002">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should log warning and skip set operation when chaos is triggered" name="CacheService Chaos Testing should log warning and skip set operation when chaos is triggered" time="0.001">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should log warning and skip delete operation when chaos is triggered" name="CacheService Chaos Testing should log warning and skip delete operation when chaos is triggered" time="0.001">
+    </testcase>
+    <testcase classname="CacheService Chaos Testing should enable Redis cache and log the status" name="CacheService Chaos Testing should enable Redis cache and log the status" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="LocalStrategy" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.233" tests="3">
+    <testcase classname="LocalStrategy should be defined" name="LocalStrategy should be defined" time="0.01">
+    </testcase>
+    <testcase classname="LocalStrategy validate should return user when credentials are valid" name="LocalStrategy validate should return user when credentials are valid" time="0.004">
+    </testcase>
+    <testcase classname="LocalStrategy validate should throw UnauthorizedException when credentials are invalid" name="LocalStrategy validate should throw UnauthorizedException when credentials are invalid" time="0.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="PrismaService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:09" time="0.172" tests="3">
+    <testcase classname="PrismaService should be defined" name="PrismaService should be defined" time="0.031">
+    </testcase>
+    <testcase classname="PrismaService onModuleInit should connect to the database" name="PrismaService onModuleInit should connect to the database" time="0.002">
+    </testcase>
+    <testcase classname="PrismaService onModuleDestroy should disconnect from the database" name="PrismaService onModuleDestroy should disconnect from the database" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:09" time="0.299" tests="6">
+    <testcase classname="AuthService should be defined" name="AuthService should be defined" time="0.002">
+    </testcase>
+    <testcase classname="AuthService validateUser should return user without password when credentials are valid" name="AuthService validateUser should return user without password when credentials are valid" time="0.001">
+    </testcase>
+    <testcase classname="AuthService validateUser should return null when user is not found" name="AuthService validateUser should return null when user is not found" time="0">
+    </testcase>
+    <testcase classname="AuthService validateUser should return null when password is invalid" name="AuthService validateUser should return null when password is invalid" time="0.001">
+    </testcase>
+    <testcase classname="AuthService login should return access token and user when credentials are valid" name="AuthService login should return access token and user when credentials are valid" time="0.001">
+    </testcase>
+    <testcase classname="AuthService login should throw UnauthorizedException when credentials are invalid" name="AuthService login should throw UnauthorizedException when credentials are invalid" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="UsersService" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:09" time="0.263" tests="19">
+    <testcase classname="UsersService should be defined" name="UsersService should be defined" time="0.002">
+    </testcase>
+    <testcase classname="UsersService create should create a new user" name="UsersService create should create a new user" time="0.001">
+    </testcase>
+    <testcase classname="UsersService create should create a new user and return it without password" name="UsersService create should create a new user and return it without password" time="0.001">
+    </testcase>
+    <testcase classname="UsersService create should throw ConflictException if email already exists" name="UsersService create should throw ConflictException if email already exists" time="0.012">
+    </testcase>
+    <testcase classname="UsersService findAll should use cache service to get or set users" name="UsersService findAll should use cache service to get or set users" time="0.001">
+    </testcase>
+    <testcase classname="UsersService findAll should return cached users when available" name="UsersService findAll should return cached users when available" time="0.001">
+    </testcase>
+    <testcase classname="UsersService findAll should return cached user when available" name="UsersService findAll should return cached user when available" time="0.002">
+    </testcase>
+    <testcase classname="UsersService findAll should throw NotFoundException when user is not found" name="UsersService findAll should throw NotFoundException when user is not found" time="0.001">
+    </testcase>
+    <testcase classname="UsersService findByEmail should use cache service to get or set user by email" name="UsersService findByEmail should use cache service to get or set user by email" time="0.001">
+    </testcase>
+    <testcase classname="UsersService findByEmail should return cached user when available" name="UsersService findByEmail should return cached user when available" time="0">
+    </testcase>
+    <testcase classname="UsersService findByEmail should return null when user is not found by email" name="UsersService findByEmail should return null when user is not found by email" time="0.001">
+    </testcase>
+    <testcase classname="UsersService update should update user, invalidate cache, and return user without password" name="UsersService update should update user, invalidate cache, and return user without password" time="0.002">
+    </testcase>
+    <testcase classname="UsersService update should invalidate email cache when email is updated" name="UsersService update should invalidate email cache when email is updated" time="0.004">
+    </testcase>
+    <testcase classname="UsersService update should throw NotFoundException if user does not exist" name="UsersService update should throw NotFoundException if user does not exist" time="0.001">
+    </testcase>
+    <testcase classname="UsersService update should throw ConflictException if updating email to one that already exists" name="UsersService update should throw ConflictException if updating email to one that already exists" time="0.001">
+    </testcase>
+    <testcase classname="UsersService update should hash password if included in update" name="UsersService update should hash password if included in update" time="0.001">
+    </testcase>
+    <testcase classname="UsersService remove should soft delete user, invalidate cache, and return success message" name="UsersService remove should soft delete user, invalidate cache, and return success message" time="0.001">
+    </testcase>
+    <testcase classname="UsersService remove should throw NotFoundException if user does not exist" name="UsersService remove should throw NotFoundException if user does not exist" time="0">
+    </testcase>
+    <testcase classname="UsersService hashPassword should hash password correctly" name="UsersService hashPassword should hash password correctly" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="RolesGuard" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.088" tests="4">
+    <testcase classname="RolesGuard should be defined" name="RolesGuard should be defined" time="0.001">
+    </testcase>
+    <testcase classname="RolesGuard canActivate should return true if no roles are required" name="RolesGuard canActivate should return true if no roles are required" time="0.001">
+    </testcase>
+    <testcase classname="RolesGuard canActivate should return true if user has required role" name="RolesGuard canActivate should return true if user has required role" time="0.001">
+    </testcase>
+    <testcase classname="RolesGuard canActivate should return false if user does not have required role" name="RolesGuard canActivate should return false if user does not have required role" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Import Test" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.083" tests="1">
+    <testcase classname="Import Test should import" name="Import Test should import" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="LocalAuthGuard" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.112" tests="2">
+    <testcase classname="LocalAuthGuard should be defined" name="LocalAuthGuard should be defined" time="0.009">
+    </testcase>
+    <testcase classname="LocalAuthGuard should call AuthGuard with local strategy" name="LocalAuthGuard should call AuthGuard with local strategy" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="HealthController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:09" time="0.328" tests="2">
+    <testcase classname="HealthController should be defined" name="HealthController should be defined" time="0.002">
+    </testcase>
+    <testcase classname="HealthController check should return the health check result" name="HealthController check should return the health check result" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="JwtStrategy" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.15" tests="2">
+    <testcase classname="JwtStrategy should be defined" name="JwtStrategy should be defined" time="0.005">
+    </testcase>
+    <testcase classname="JwtStrategy validate should return user payload" name="JwtStrategy validate should return user payload" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.173" tests="3">
+    <testcase classname="AppController root should return &quot;Hello World!&quot;" name="AppController root should return &quot;Hello World!&quot;" time="0.007">
+    </testcase>
+    <testcase classname="AppController health should return health status object" name="AppController health should return health status object" time="0.001">
+    </testcase>
+    <testcase classname="AppController health should return current timestamp" name="AppController health should return current timestamp" time="0.011">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.607" tests="4">
+    <testcase classname="AuthController should be defined" name="AuthController should be defined" time="0.01">
+    </testcase>
+    <testcase classname="AuthController login should call authService.login with loginDto" name="AuthController login should call authService.login with loginDto" time="0.002">
+    </testcase>
+    <testcase classname="AuthController register should call usersService.create with createUserDto" name="AuthController register should call usersService.create with createUserDto" time="0.001">
+    </testcase>
+    <testcase classname="AuthController getProfile should return the user from the request" name="AuthController getProfile should return the user from the request" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TracingController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.193" tests="2">
+    <testcase classname="TracingController should be defined" name="TracingController should be defined" time="0.002">
+    </testcase>
+    <testcase classname="TracingController getTracingInfo should return tracing information" name="TracingController getTracingInfo should return tracing information" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="UsersController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:05" time="4.614" tests="6">
+    <testcase classname="UsersController should be defined" name="UsersController should be defined" time="0.01">
+    </testcase>
+    <testcase classname="UsersController create should call usersService.create with createUserDto" name="UsersController create should call usersService.create with createUserDto" time="0.002">
+    </testcase>
+    <testcase classname="UsersController findAll should call usersService.findAll" name="UsersController findAll should call usersService.findAll" time="0.002">
+    </testcase>
+    <testcase classname="UsersController findOne should call usersService.findOne with id" name="UsersController findOne should call usersService.findOne with id" time="0.001">
+    </testcase>
+    <testcase classname="UsersController update should call usersService.update with id and updateUserDto" name="UsersController update should call usersService.update with id and updateUserDto" time="0.001">
+    </testcase>
+    <testcase classname="UsersController remove should call usersService.remove with id" name="UsersController remove should call usersService.remove with id" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="JwtAuthGuard" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.103" tests="2">
+    <testcase classname="JwtAuthGuard should be defined" name="JwtAuthGuard should be defined" time="0.004">
+    </testcase>
+    <testcase classname="JwtAuthGuard should call AuthGuard with jwt strategy" name="JwtAuthGuard should call AuthGuard with jwt strategy" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Minimal AppThrottlerGuard Test" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.04" tests="1">
+    <testcase classname="Minimal AppThrottlerGuard Test should just log a message" name="Minimal AppThrottlerGuard Test should just log a message" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Roles Decorator" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.051" tests="2">
+    <testcase classname="Roles Decorator should call SetMetadata with roles key and roles array" name="Roles Decorator should call SetMetadata with roles key and roles array" time="0.001">
+    </testcase>
+    <testcase classname="Roles Decorator should call SetMetadata with multiple roles" name="Roles Decorator should call SetMetadata with multiple roles" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="PrometheusController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.241" tests="2">
+    <testcase classname="PrometheusController should be defined" name="PrometheusController should be defined" time="0.002">
+    </testcase>
+    <testcase classname="PrometheusController getMetrics should return metrics data with proper content type" name="PrometheusController getMetrics should return metrics data with proper content type" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="SkipThrottle Decorator" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.032" tests="1">
+    <testcase classname="SkipThrottle Decorator should call SetMetadata with the correct parameters" name="SkipThrottle Decorator should call SetMetadata with the correct parameters" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="MetricsMiddleware" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.193" tests="2">
+    <testcase classname="MetricsMiddleware should be defined" name="MetricsMiddleware should be defined" time="0.001">
+    </testcase>
+    <testcase classname="MetricsMiddleware use should track request metrics and call next" name="MetricsMiddleware use should track request metrics and call next" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Isolation Test" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.027" tests="1">
+    <testcase classname="Isolation Test should pass" name="Isolation Test should pass" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TracingMiddleware" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.111" tests="6">
+    <testcase classname="TracingMiddleware should be defined" name="TracingMiddleware should be defined" time="0">
+    </testcase>
+    <testcase classname="TracingMiddleware use should create a span with request attributes" name="TracingMiddleware use should create a span with request attributes" time="0.001">
+    </testcase>
+    <testcase classname="TracingMiddleware use should handle missing headers gracefully" name="TracingMiddleware use should handle missing headers gracefully" time="0">
+    </testcase>
+    <testcase classname="TracingMiddleware use should override response.end to capture response data" name="TracingMiddleware use should override response.end to capture response data" time="0">
+    </testcase>
+    <testcase classname="TracingMiddleware use should mark span as error for 4xx status codes" name="TracingMiddleware use should mark span as error for 4xx status codes" time="0.001">
+    </testcase>
+    <testcase classname="TracingMiddleware use should mark span as error for 5xx status codes" name="TracingMiddleware use should mark span as error for 5xx status codes" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ChaosController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.274" tests="5">
+    <testcase classname="ChaosController toggleRedis should toggle Redis status to disabled" name="ChaosController toggleRedis should toggle Redis status to disabled" time="0.003">
+    </testcase>
+    <testcase classname="ChaosController toggleRedis should toggle Redis status to enabled" name="ChaosController toggleRedis should toggle Redis status to enabled" time="0.001">
+    </testcase>
+    <testcase classname="ChaosController setProbability should set chaos probability" name="ChaosController setProbability should set chaos probability" time="0.001">
+    </testcase>
+    <testcase classname="ChaosController setProbability should reject invalid probability values" name="ChaosController setProbability should reject invalid probability values" time="0.005">
+    </testcase>
+    <testcase classname="ChaosController getStatus should return current chaos status" name="ChaosController getStatus should return current chaos status" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TestController" errors="0" failures="0" skipped="0" timestamp="2025-06-13T09:35:10" time="0.166" tests="2">
+    <testcase classname="TestController should be defined" name="TestController should be defined" time="0.002">
+    </testcase>
+    <testcase classname="TestController should return a message for rate limit test endpoint" name="TestController should return a message for rate limit test endpoint" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,41 @@
+---
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  status:
+    project:
+      default:
+        # basic
+        target: 80%
+        threshold: 5%
+        # advanced
+        if_not_found: success
+        if_ci_failed: error
+        if_no_uploads: error
+    patch:
+      default:
+        # basic
+        target: 80%
+        threshold: 5%
+        # advanced
+        if_no_uploads: error
+
+# Enable carryforward of coverage for files not included in the current report
+flag_management:
+  default_rules:
+    carryforward: true
+
+comment:
+  layout: 'reach,diff,flags,files,footer'
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: false
+  require_bundle_changes: true
+  bundle_change_threshold: '1Kb'
+
+# Bundle analysis configuration
+bundle_analysis:
+  warning_threshold: '5%'
+  status: 'informational'

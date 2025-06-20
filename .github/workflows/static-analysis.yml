@@ -1,0 +1,166 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/**/*.ts'
+      - 'test/**/*.ts'
+      - 'prisma/**/*.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - '.eslintrc.js'
+      - '.prettierrc'
+      - '.github/workflows/static-analysis.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'src/**/*.ts'
+      - 'test/**/*.ts'
+      - 'prisma/**/*.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - '.eslintrc.js'
+      - '.prettierrc'
+      - '.github/workflows/static-analysis.yml'
+
+# Limit concurrent runs of the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: 'npm'
+
+    # Cache node_modules
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-22.x-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-22.x-
+
+    - name: Install dependencies
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
+
+    # Cache TypeScript compilation results
+    - name: Cache TypeScript
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules/.cache/tsbuildinfo
+          tsconfig.tsbuildinfo
+        key: ${{ runner.os }}-tsc-${{ hashFiles('**/tsconfig.json') }}-${{ hashFiles('**/*.ts') }}
+        restore-keys: |
+          ${{ runner.os }}-tsc-${{ hashFiles('**/tsconfig.json') }}-
+          ${{ runner.os }}-tsc-
+
+    - name: TypeScript type check
+      run: npx tsc --noEmit
+
+  lint:
+    name: ESLint & Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Full git history is needed to get a proper list of changed files for PRs
+        fetch-depth: ${{ github.event_name == 'pull_request' && 0 || 1 }}
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: 'npm'
+
+    # Cache node_modules
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      id: node-modules-cache
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-22.x-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-22.x-
+
+    - name: Install dependencies
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
+
+    # Cache ESLint results
+    - name: Cache ESLint results
+      uses: actions/cache@v4
+      with:
+        path: .eslintcache
+        key: ${{ runner.os }}-eslint-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-eslint-
+
+    # Cache Prettier results
+    - name: Cache Prettier results
+      uses: actions/cache@v4
+      with:
+        path: node_modules/.cache/prettier
+        key: ${{ runner.os }}-prettier-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-prettier-
+
+    - name: Auto-fix ESLint and Prettier issues
+      if: github.event_name == 'pull_request'
+      run: |
+        # Get list of changed files
+        CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.ts$' | xargs)
+        if [ -n "$CHANGED_FILES" ]; then
+          echo "Fixing ESLint issues in changed files: $CHANGED_FILES"
+          npx eslint --cache --fix $CHANGED_FILES || true
+          npx prettier --cache --write $CHANGED_FILES || true
+
+          # Check if there are changes to commit
+          if [ -n "$(git status --porcelain)" ]; then
+            # Setup git user
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+
+            # Commit and push changes
+            git add .
+            git commit -m "chore: auto-fix linting and formatting issues"
+            git push
+          fi
+        fi
+
+    - name: Generate ESLint report
+      run: npx eslint --cache "{src,apps,libs,test}/**/*.ts" --format json --output-file eslint-report.json || true
+
+    - name: ESLint check (for CI status)
+      run: npm run lint -- --cache
+
+    - name: Prettier check
+      run: npx prettier --cache --check "src/**/*.ts" "test/**/*.ts" || echo "Prettier found formatting issues"
+
+    - name: Upload ESLint report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: eslint-report
+        path: eslint-report.json
+        if-no-files-found: ignore
+        retention-days: 7

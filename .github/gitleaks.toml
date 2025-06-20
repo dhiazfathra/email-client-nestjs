@@ -1,0 +1,76 @@
+# GitLeaks Configuration File
+# This configuration is based on the default GitLeaks ruleset with some customizations
+
+title = "GitLeaks Configuration"
+
+# Global allowlist
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''node_modules''',
+    '''dist''',
+    '''coverage''',
+    '''\.git''',
+    '''\.yarn''',
+    '''yarn\.lock''',
+    '''package-lock\.json''',
+    '''\.env\.example''',
+    '''\.env\.test'''
+]
+
+# Generic API Key
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)((api|app|aws|cloud|oy)[a-z0-9_\-]*){1,}(key|secret|token|pass|password|auth|credential)[a-z0-9_\-]*\s*[:=>]+\s*['\"][0-9a-zA-Z\-_=+/]{16,}['"]\s*'''
+tags = ["key", "API", "generic"]
+[[rules.allowlist]]
+description = "Ignore example keys"
+regex = '''(?i)(example|sample|fake|test|mock)'''
+
+# JWT Token
+[[rules]]
+id = "jwt"
+description = "JSON Web Token"
+regex = '''eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*'''
+tags = ["jwt"]
+[[rules.allowlist]]
+description = "Ignore test JWTs"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'''
+
+# Password in code
+[[rules]]
+id = "password-in-code"
+description = "Password in code"
+regex = '''(?i)(password|passwd|pwd|secret|token)[\s:=]+['"][^'"]{3,}['"]'''
+tags = ["password", "code"]
+[[rules.allowlist]]
+description = "Ignore test passwords"
+regex = '''(?i)(password|passwd|pwd|secret|token)[\s:=]+['"](?:test|example|sample|password|pass123|changeme|default|secret)['"]\s*'''
+
+# NestJS specific secrets
+[[rules]]
+id = "nestjs-jwt-secret"
+description = "NestJS JWT Secret"
+regex = '''(?i)(jwt|auth)[a-z0-9_\-]*(secret|key)[a-z0-9_\-]*\s*[:=>]+\s*['\"][0-9a-zA-Z\-_=+/]{16,}['"]\s*'''
+tags = ["nestjs", "jwt", "secret"]
+
+# PostgreSQL Connection String
+[[rules]]
+id = "postgres-connection-string"
+description = "PostgreSQL Connection String"
+regex = '''(?i)postgres(?:ql)?:\/\/[a-zA-Z0-9-]+:[a-zA-Z0-9-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*:[0-9]+\/[a-zA-Z0-9-]+'''
+tags = ["database", "postgresql", "connection-string"]
+[[rules.allowlist]]
+description = "Ignore example connection strings"
+regex = '''(?i)postgres(?:ql)?:\/\/(?:postgres|user|admin|root):(?:postgres|password|changeme|secret)@(?:localhost|127\.0\.0\.1|host\.docker\.internal):[0-9]+\/(?:postgres|test|dev|development)'''
+
+# Redis Connection String
+[[rules]]
+id = "redis-connection-string"
+description = "Redis Connection String"
+regex = '''(?i)redis:\/\/[a-zA-Z0-9-]+:[a-zA-Z0-9-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*:[0-9]+'''
+tags = ["database", "redis", "connection-string"]
+[[rules.allowlist]]
+description = "Ignore example connection strings"
+regex = '''(?i)redis:\/\/(?:redis|user|admin|root):(?:redis|password|changeme|secret)@(?:localhost|127\.0\.0\.1|host\.docker\.internal):[0-9]+'''
