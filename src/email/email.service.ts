@@ -211,7 +211,7 @@ export class EmailService {
 
       // Promisify IMAP connection
       return new Promise((resolve, reject) => {
-        const emails: Email[] = [];
+        const emails: Partial<Email>[] = [];
         let total = 0;
 
         imapClient.once('ready', () => {
@@ -241,7 +241,7 @@ export class EmailService {
 
             fetch.on('message', (msg, _seqno) => {
               // Create email object with required fields
-              const email = {
+              const email: Partial<Email> = {
                 messageId: null,
                 from: '',
                 to: [],
@@ -292,7 +292,7 @@ export class EmailService {
               });
 
               msg.once('end', () => {
-                emails.push(email as Email);
+                emails.push(email);
               });
             });
 
@@ -303,17 +303,45 @@ export class EmailService {
 
             fetch.once('end', () => {
               imapClient.end();
+              this.logger.log(
+                `Fetched ${emails.length} emails from IMAP server`,
+              );
 
               // Save fetched emails to database
               this.saveEmailsToDatabase(emails, userId)
-                .then(() => {
+                .then(async () => {
+                  // Fetch the saved emails from the database to return with proper IDs
+                  const savedEmails = await this.prisma.email.findMany({
+                    where: {
+                      userId,
+                      folder,
+                      messageId: {
+                        in: emails
+                          .filter((e) => e.messageId)
+                          .map((e) => e.messageId),
+                      },
+                    },
+                    orderBy: { receivedAt: 'desc' },
+                    take: limit,
+                  });
                   resolve({
-                    emails,
+                    emails: savedEmails,
                     total,
                     hasMore: skip + limit < total,
                   });
                 })
-                .catch(reject);
+                .catch((error) => {
+                  this.logger.error(
+                    `Failed to save emails: ${error.message}`,
+                    error.stack,
+                  );
+                  // Even if saving fails, return the fetched emails
+                  resolve({
+                    emails: emails as Email[],
+                    total,
+                    hasMore: skip + limit < total,
+                  });
+                });
             });
           });
         });

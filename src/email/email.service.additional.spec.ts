@@ -197,6 +197,9 @@ describe('EmailService Additional Tests', () => {
           });
         });
 
+      // Mock the findMany method to return the mockEmails
+      mockPrismaService.email.findMany.mockResolvedValue(mockEmails);
+
       const result = await service.fetchEmailsIMAP(userId, options);
 
       expect(result).toEqual({
