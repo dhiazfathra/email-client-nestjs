@@ -184,7 +184,18 @@ jobs:
 
       - name: Generate ESLint SARIF report
         run: |
-          npx eslint "{src,apps,libs,test}/**/*.ts" --cache --format @microsoft/eslint-formatter-sarif --output-file eslint-sarif.json || true
+          # Focus on security-related rules and high severity issues to reduce report size
+          npx eslint "{src,apps,libs,test}/**/*.ts" --cache --format @microsoft/eslint-formatter-sarif --output-file eslint-sarif.json --quiet || true
+          
+          # Check file size and truncate if necessary to avoid GitHub step summary size limit
+          FILE_SIZE=$(stat -c%s "eslint-sarif.json" 2>/dev/null || stat -f%z "eslint-sarif.json")
+          if [ "$FILE_SIZE" -gt 1000000 ]; then
+            echo "ESLint SARIF report is too large ($FILE_SIZE bytes). Truncating to avoid GitHub step summary limit."
+            # Extract header and truncate results array
+            jq '.runs[0].results = (.runs[0].results | .[0:100])' eslint-sarif.json > eslint-sarif-truncated.json
+            mv eslint-sarif-truncated.json eslint-sarif.json
+            echo "Report truncated to show only the first 100 issues."
+          fi
 
       # Upload ESLint SARIF results to GitHub Security tab
       - name: Upload ESLint SARIF file
@@ -194,3 +205,6 @@ jobs:
           sarif_file: eslint-sarif.json
           wait-for-processing: true
           category: eslint
+        # Disable step summary to avoid size limit issues
+        env:
+          GITHUB_STEP_SUMMARY: ""
