@@ -71,9 +71,15 @@ export class PrismaService
         ) {
           // For single result
           if (!Array.isArray(result) && result.emailPassword) {
-            result.emailPassword = this.encryptionService.decrypt(
-              result.emailPassword,
-            );
+            try {
+              result.emailPassword = this.encryptionService.decrypt(
+                result.emailPassword,
+              );
+            } catch (error) {
+              // Log error and set to null or handle appropriately
+              console.error('Failed to decrypt email password:', error);
+              result.emailPassword = null;
+            }
           }
 
           // For array results
