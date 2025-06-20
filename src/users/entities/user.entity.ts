@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
 /**
  * User entity representing a user in the system
@@ -70,4 +71,52 @@ export class User {
     default: false,
   })
   isDeleted: boolean;
+
+  @Exclude()
+  emailPassword?: string;
+
+  @ApiPropertyOptional({
+    description: 'Email host server',
+    example: 'smtp.gmail.com',
+  })
+  emailHost?: string;
+
+  @ApiPropertyOptional({ description: 'IMAP port', example: 993 })
+  imapPort?: number;
+
+  @ApiPropertyOptional({ description: 'POP3 port', example: 995 })
+  pop3Port?: number;
+
+  @ApiPropertyOptional({ description: 'SMTP port', example: 587 })
+  smtpPort?: number;
+
+  @ApiPropertyOptional({
+    description: 'Email username',
+    example: 'user@example.com',
+  })
+  emailUsername?: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether to use secure connection',
+    example: true,
+  })
+  emailSecure?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Whether IMAP is enabled',
+    example: true,
+  })
+  imapEnabled?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Whether POP3 is enabled',
+    example: false,
+  })
+  pop3Enabled?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Whether SMTP is enabled',
+    example: true,
+  })
+  smtpEnabled?: boolean;
 }

@@ -1,19 +1,20 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { RedisCacheModule } from './cache/cache.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { UsersModule } from './users/users.module';
+import { ChaosModule } from './chaos/chaos.module';
+import { EmailModule } from './email/email.module';
+import { EncryptionModule } from './encryption/encryption.module';
 import { HealthModule } from './health/health.module';
 import { MetricsMiddleware } from './health/metrics.middleware';
-import { TracingModule } from './tracing/tracing.module';
-import { TracingMiddleware } from './tracing/tracing.middleware';
-import { ChaosModule } from './chaos/chaos.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { TestModule } from './test/test.module';
-import { EmailModule } from './email/email.module';
+import { TracingMiddleware } from './tracing/tracing.middleware';
+import { TracingModule } from './tracing/tracing.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { EmailModule } from './email/email.module';
     ChaosModule,
     TestModule,
     EmailModule,
+    EncryptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
