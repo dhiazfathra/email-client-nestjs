@@ -3,6 +3,8 @@ import { Email } from '@prisma/client';
 import * as IMAP from 'imap';
 import { simpleParser } from 'mailparser';
 import * as nodemailer from 'nodemailer';
+import * as DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import * as POP3Client from 'poplib';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailConfigDto } from './dto/email-config.dto';
@@ -121,7 +123,7 @@ export class EmailService {
         bcc: emailData.bcc?.join(','),
         subject: emailData.subject,
         text: emailData.text,
-        html: emailData.html,
+        html: DOMPurify.sanitize(emailData.html, { window: new JSDOM('').window }),
       };
 
       await transporter.sendMail(mailOptions);
