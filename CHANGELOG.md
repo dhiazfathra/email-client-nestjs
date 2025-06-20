@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/dhiazfathra/email-client-nestjs/compare/v1.0.0...v1.1.0) (2025-06-20)
+
+
+### Features
+
+* encrypt email password with secure storage & retrieval ([#3](https://github.com/dhiazfathra/email-client-nestjs/issues/3)) ([5044223](https://github.com/dhiazfathra/email-client-nestjs/commit/50442235bd7763770ddc7133bf9c34ba1081fef4))
+
 # 1.0.0 (2025-06-20)
 
 
