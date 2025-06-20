@@ -9,9 +9,8 @@ export class EncryptionService {
   constructor(private configService: ConfigService) {
     // Get encryption key from environment variables
     this.encryptionKey =
-      this.configService.get<string>('ENCRYPTION_KEY') ||
-      // Fallback to a default key (not recommended for production)
-      'default-encryption-key-change-in-production';
+      this.configService.get<string>('ENCRYPTION_KEY') ??
+      'default-encryption-key';
   }
 
   /**
@@ -35,7 +34,16 @@ export class EncryptionService {
     if (encryptedText === null || encryptedText === undefined) {
       return null;
     }
-    const bytes = CryptoJS.AES.decrypt(encryptedText, this.encryptionKey);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    try {
+      const bytes = CryptoJS.AES.decrypt(encryptedText, this.encryptionKey);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      if (!decrypted) {
+        throw new Error('Decryption failed - invalid data or key');
+      }
+      return decrypted;
+    } catch (error) {
+      console.error('Decryption error:', error.message);
+      return null;
+    }
   }
 }

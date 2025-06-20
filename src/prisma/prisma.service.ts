@@ -27,7 +27,9 @@ export class PrismaService
         // Handle encryption for create and update operations
         if (
           (params.action === 'create' ||
+            params.action === 'createMany' ||
             params.action === 'update' ||
+            params.action === 'updateMany' ||
             params.action === 'upsert') &&
           params.args.data
         ) {
@@ -65,7 +67,9 @@ export class PrismaService
         // Handle decryption for find operations
         if (
           (params.action === 'findUnique' ||
+            params.action === 'findUniqueOrThrow' ||
             params.action === 'findFirst' ||
+            params.action === 'findFirstOrThrow' ||
             params.action === 'findMany') &&
           result
         ) {
