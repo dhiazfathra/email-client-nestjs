@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Exclude, Expose } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -9,6 +10,20 @@ import {
 } from 'class-validator';
 
 export class EmailConfigDto {
+  constructor(partial?: Partial<EmailConfigDto>) {
+    if (partial) {
+      Object.assign(this, partial);
+    }
+  }
+  /**
+   * Exposes the email password for internal use only (e.g., for email authentication)
+   * This method should only be called when the password is needed for operations
+   * like IMAP/SMTP/POP3 authentication
+   */
+  @Expose()
+  getEmailPassword(): string | undefined {
+    return this.emailPassword;
+  }
   @ApiProperty({ description: 'Email server host', example: 'smtp.gmail.com' })
   @IsString()
   @IsOptional()
@@ -43,9 +58,10 @@ export class EmailConfigDto {
   @IsOptional()
   emailUsername?: string;
 
-  @ApiProperty({ description: 'Email password', example: 'password123' })
+  @ApiHideProperty()
   @IsString()
   @IsOptional()
+  @Exclude({ toPlainOnly: true })
   emailPassword?: string;
 
   @ApiProperty({ description: 'Whether to use SSL/TLS', example: true })

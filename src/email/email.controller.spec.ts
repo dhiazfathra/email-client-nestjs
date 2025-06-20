@@ -65,6 +65,9 @@ describe('EmailController', () => {
         imapEnabled: true,
         smtpEnabled: true,
         pop3Enabled: false,
+        getEmailPassword: function () {
+          return this.emailPassword;
+        },
       };
 
       mockEmailService.getUserEmailConfig.mockResolvedValue(mockConfig);
@@ -98,6 +101,9 @@ describe('EmailController', () => {
         imapEnabled: true,
         smtpEnabled: true,
         pop3Enabled: true,
+        getEmailPassword: function () {
+          return this.emailPassword;
+        },
       };
 
       mockEmailService.updateUserEmailConfig.mockResolvedValue(emailConfig);

@@ -20,27 +20,39 @@ export class EmailService {
   /**
    * Get user's email configuration
    */
-  async getUserEmailConfig(userId: string): Promise<EmailConfigDto> {
+  async getUserEmailConfig(id: string): Promise<EmailConfigDto> {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id },
+      select: {
+        emailHost: true,
+        emailUsername: true,
+        emailPassword: true,
+        imapPort: true,
+        pop3Port: true,
+        smtpPort: true,
+        emailSecure: true,
+        imapEnabled: true,
+        pop3Enabled: true,
+        smtpEnabled: true,
+      },
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return {
+    return new EmailConfigDto({
       emailHost: user.emailHost,
+      emailUsername: user.emailUsername,
+      emailPassword: user.emailPassword,
       imapPort: user.imapPort,
       pop3Port: user.pop3Port,
       smtpPort: user.smtpPort,
-      emailUsername: user.emailUsername,
-      emailPassword: user.emailPassword,
       emailSecure: user.emailSecure,
       imapEnabled: user.imapEnabled,
-      smtpEnabled: user.smtpEnabled,
       pop3Enabled: user.pop3Enabled,
-    };
+      smtpEnabled: user.smtpEnabled,
+    });
   }
 
   /**
@@ -66,7 +78,7 @@ export class EmailService {
       },
     });
 
-    return {
+    return new EmailConfigDto({
       emailHost: updatedUser.emailHost,
       imapPort: updatedUser.imapPort,
       pop3Port: updatedUser.pop3Port,
@@ -77,7 +89,7 @@ export class EmailService {
       imapEnabled: updatedUser.imapEnabled,
       smtpEnabled: updatedUser.smtpEnabled,
       pop3Enabled: updatedUser.pop3Enabled,
-    };
+    });
   }
 
   /**

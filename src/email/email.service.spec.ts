@@ -106,6 +106,18 @@ describe('EmailService', () => {
         pop3Enabled: mockUser.pop3Enabled,
       });
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
+        select: {
+          emailHost: true,
+          emailPassword: true,
+          emailSecure: true,
+          emailUsername: true,
+          imapEnabled: true,
+          imapPort: true,
+          pop3Enabled: true,
+          pop3Port: true,
+          smtpEnabled: true,
+          smtpPort: true,
+        },
         where: { id: userId },
       });
     });
@@ -118,6 +130,18 @@ describe('EmailService', () => {
         NotFoundException,
       );
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
+        select: {
+          emailHost: true,
+          emailPassword: true,
+          emailSecure: true,
+          emailUsername: true,
+          imapEnabled: true,
+          imapPort: true,
+          pop3Enabled: true,
+          pop3Port: true,
+          smtpEnabled: true,
+          smtpPort: true,
+        },
         where: { id: userId },
       });
     });
@@ -126,18 +150,17 @@ describe('EmailService', () => {
   describe('updateUserEmailConfig', () => {
     it('should update user email configuration', async () => {
       const userId = 'user-id';
-      const emailConfig: EmailConfigDto = {
-        emailHost: 'smtp.updated.com',
-        imapPort: 993,
-        pop3Port: 995,
-        smtpPort: 465,
-        emailUsername: 'updated@example.com',
-        emailPassword: 'newpassword',
-        emailSecure: true,
-        imapEnabled: true,
-        smtpEnabled: true,
-        pop3Enabled: true,
-      };
+      const emailConfig = new EmailConfigDto();
+      emailConfig.emailHost = 'smtp.updated.com';
+      emailConfig.imapPort = 993;
+      emailConfig.pop3Port = 995;
+      emailConfig.smtpPort = 465;
+      emailConfig.emailUsername = 'updated@example.com';
+      emailConfig.emailPassword = 'newpassword';
+      emailConfig.emailSecure = true;
+      emailConfig.imapEnabled = true;
+      emailConfig.smtpEnabled = true;
+      emailConfig.pop3Enabled = true;
 
       const updatedUser = {
         id: userId,
