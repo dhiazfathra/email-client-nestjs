@@ -61,7 +61,7 @@ export class EmailController {
   @ApiOperation({ summary: 'Fetch emails using IMAP with pagination' })
   @ApiResponse({ status: 200, description: 'Returns emails fetched via IMAP' })
   async fetchEmailsIMAP(@GetUser() user: User, @Query() options: GetEmailsDto) {
-    return this.emailService.fetchEmailsIMAP(user.id, options);
+    return this.emailService.fetchEmails(user.id, options);
   }
 
   @Get('pop3')
@@ -69,7 +69,7 @@ export class EmailController {
   @ApiOperation({ summary: 'Fetch emails using POP3 with pagination' })
   @ApiResponse({ status: 200, description: 'Returns emails fetched via POP3' })
   async fetchEmailsPOP3(@GetUser() user: User, @Query() options: GetEmailsDto) {
-    return this.emailService.fetchEmailsPOP3(user.id, options);
+    return this.emailService.fetchEmails(user.id, options);
   }
 
   @Get()

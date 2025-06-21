@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Email } from '@prisma/client';
+import { MicrosoftGraphEmailService } from '../microsoft-graph/microsoft-graph-email.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailProviderType } from './dto/email-config.dto';
 import { GetEmailsDto } from './dto/get-emails.dto';
 import { EmailService } from './email.service';
 
@@ -9,6 +11,7 @@ jest.mock('nodemailer');
 jest.mock('imap');
 jest.mock('poplib');
 jest.mock('mailparser');
+jest.mock('@microsoft/microsoft-graph-client');
 
 describe('EmailService - POP3 Tests', () => {
   let service: EmailService;
@@ -29,10 +32,20 @@ describe('EmailService - POP3 Tests', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
+    const mockMicrosoftGraphEmailService = {
+      getEmails: jest.fn(),
+      getEmailDetails: jest.fn(),
+      saveEmailsToDatabase: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailService,
         { provide: PrismaService, useValue: mockPrismaService },
+        {
+          provide: MicrosoftGraphEmailService,
+          useValue: mockMicrosoftGraphEmailService,
+        },
       ],
     }).compile();
 
@@ -51,6 +64,7 @@ describe('EmailService - POP3 Tests', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        providerType: EmailProviderType.STANDARD,
         emailUsername: 'user@example.com',
         emailPassword: 'password',
         emailSecure: true,
@@ -155,6 +169,7 @@ describe('EmailService - POP3 Tests', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        providerType: EmailProviderType.STANDARD,
         emailUsername: 'user@example.com',
         emailPassword: 'password',
         emailSecure: true,
@@ -207,6 +222,7 @@ describe('EmailService - POP3 Tests', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        providerType: EmailProviderType.STANDARD,
         emailUsername: 'user@example.com',
         emailPassword: 'password',
         emailSecure: true,
@@ -256,6 +272,7 @@ describe('EmailService - POP3 Tests', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        providerType: EmailProviderType.STANDARD,
         emailUsername: 'user@example.com',
         emailPassword: 'password',
         emailSecure: true,
@@ -337,6 +354,7 @@ describe('EmailService - POP3 Tests', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        providerType: EmailProviderType.STANDARD,
         emailUsername: 'user@example.com',
         emailPassword: 'password',
         emailSecure: true,

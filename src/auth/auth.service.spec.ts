@@ -65,6 +65,7 @@ describe('AuthService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(user);
@@ -86,6 +87,7 @@ describe('AuthService', () => {
         imapPort: 993,
         pop3Port: 995,
         smtpPort: 587,
+        microsoftGraphEnabled: false,
         emailSecure: true,
         emailUsername: 'test@example.com',
         imapEnabled: false,
@@ -127,6 +129,7 @@ describe('AuthService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(user);

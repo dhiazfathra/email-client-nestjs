@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MicrosoftGraphEmailService } from '../microsoft-graph/microsoft-graph-email.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SendEmailDto } from './dto/send-email.dto';
 import { EmailService } from './email.service';
@@ -29,10 +30,20 @@ describe('EmailService - sendEmail', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
+    const mockMicrosoftGraphEmailService = {
+      getEmails: jest.fn(),
+      getEmailDetails: jest.fn(),
+      saveEmailsToDatabase: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailService,
         { provide: PrismaService, useValue: mockPrismaService },
+        {
+          provide: MicrosoftGraphEmailService,
+          useValue: mockMicrosoftGraphEmailService,
+        },
       ],
     }).compile();
 
@@ -116,7 +127,7 @@ describe('EmailService - sendEmail', () => {
     mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
     await expect(service.sendEmail(userId, emailData)).rejects.toThrow(
-      'User not found or SMTP not enabled',
+      'SMTP not enabled',
     );
 
     expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
