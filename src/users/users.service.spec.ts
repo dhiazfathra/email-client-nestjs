@@ -117,7 +117,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       });
       expect(prismaService.user.findFirst).toHaveBeenCalledWith({
         where: {
@@ -141,6 +141,7 @@ describe('UsersService', () => {
         lastName: 'User',
         email: 'test@example.com',
         password: 'hashedPassword',
+        microsoftGraphEnabled: false,
       };
 
       mockPrismaService.user.findFirst.mockResolvedValue(existingUser);
@@ -169,7 +170,7 @@ describe('UsersService', () => {
           email: 'user1@example.com',
           password: 'hashedPassword1',
           name: 'User 1',
-          role: 'USER',
+          role: Role.USER,
         },
         {
           id: '2',
@@ -185,7 +186,7 @@ describe('UsersService', () => {
           id: '1',
           email: 'user1@example.com',
           name: 'User 1',
-          role: 'USER',
+          role: Role.USER,
         },
         {
           id: '2',
@@ -220,7 +221,7 @@ describe('UsersService', () => {
           id: '1',
           email: 'user1@example.com',
           name: 'User 1',
-          role: 'USER',
+          role: Role.USER,
         },
       ];
 
@@ -243,7 +244,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       // Mock the getOrSet method to return the cached value without calling the factory
@@ -288,7 +289,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       // Mock the getOrSet method to call the factory function and return its result
@@ -322,7 +323,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       // Mock the getOrSet method to return the cached value without calling the factory
@@ -377,7 +378,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       const updatedUser = {
@@ -386,7 +387,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Updated',
         lastName: 'Name',
-        role: 'USER',
+        role: Role.USER,
       };
 
       // Mock the getOrSet method for findOne
@@ -404,7 +405,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         firstName: 'Updated',
         lastName: 'Name',
-        role: 'USER',
+        role: Role.USER,
       });
 
       // Verify cache invalidation
@@ -427,7 +428,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       const updateWithEmailDto = {
@@ -440,7 +441,7 @@ describe('UsersService', () => {
         password: 'hashedPassword',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       };
 
       // Mock the getOrSet method for findOne
@@ -461,7 +462,7 @@ describe('UsersService', () => {
         email: 'new@example.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
       });
 
       // Verify cache invalidation
@@ -519,6 +520,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       const updateWithEmailDto = {
@@ -587,6 +589,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       const updateWithPasswordDto = {
@@ -613,6 +616,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       // Mock the getOrSet method for findOne
@@ -633,7 +637,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'USER',
+        role: Role.USER,
         isDeleted: false,
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
@@ -647,6 +651,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       });
 
       // Verify cache invalidation
@@ -683,6 +688,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       // Mock the getOrSet method for findOne
@@ -776,6 +782,7 @@ describe('UsersService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftGraphEnabled: false,
       };
 
       jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(null); // No existing user
