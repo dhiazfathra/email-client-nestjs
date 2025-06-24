@@ -381,36 +381,15 @@ export class MicrosoftGraphEmailService {
     userId: string,
   ): Promise<void> {
     try {
-      // Use prisma transaction to save all emails
-      const promises = [];
+      // Build an array of Prisma operations without executing them immediately
+      const operations = [];
 
       for (const email of emails) {
-        // First check if the email exists
-        const existingEmail = await this.prisma.email.findFirst({
-          where: {
-            messageId: email.messageId,
-            userId,
-          },
-        });
-
-        // Either update or create based on existence
-        if (existingEmail) {
-          promises.push(
-            this.prisma.email.update({
-              where: { id: existingEmail.id },
-              data: {
-                isRead: email.isRead,
-                isFlagged: email.isFlagged,
-                isDeleted: email.isDeleted,
-                isSpam: email.isSpam,
-              },
-            }),
-          );
-        } else {
-          promises.push(
+        if (!email.messageId) {
+          // Handle emails without messageId - create them directly
+          operations.push(
             this.prisma.email.create({
               data: {
-                messageId: email.messageId,
                 from: email.from,
                 to: email.to,
                 cc: email.cc || [],
@@ -431,11 +410,62 @@ export class MicrosoftGraphEmailService {
               },
             }),
           );
+          continue;
         }
+
+        // For emails with messageId, first create a find operation
+        operations.push(
+          this.prisma.$transaction(async (tx) => {
+            // Check if email exists
+            const existingEmail = await tx.email.findFirst({
+              where: {
+                messageId: email.messageId,
+                userId: userId,
+              },
+            });
+
+            if (existingEmail) {
+              // Update existing email
+              return tx.email.update({
+                where: { id: existingEmail.id },
+                data: {
+                  isRead: email.isRead,
+                  isFlagged: email.isFlagged,
+                  isDeleted: email.isDeleted,
+                  isSpam: email.isSpam,
+                },
+              });
+            } else {
+              // Create new email
+              return tx.email.create({
+                data: {
+                  messageId: email.messageId,
+                  from: email.from,
+                  to: email.to,
+                  cc: email.cc || [],
+                  bcc: email.bcc || [],
+                  subject: email.subject,
+                  text: email.text,
+                  html: email.html,
+                  receivedAt: email.receivedAt,
+                  folder: email.folder,
+                  userId: userId,
+                  isRead: email.isRead || false,
+                  isFlagged: email.isFlagged || false,
+                  isDeleted: email.isDeleted || false,
+                  isSpam: email.isSpam || false,
+                  isDraft: email.isDraft || false,
+                  isSent: email.isSent || false,
+                  attachments: email.attachments,
+                },
+              });
+            }
+          }),
+        );
       }
 
-      // Execute all promises in a transaction
-      await this.prisma.$transaction(promises);
+      // Execute all operations in parallel using Promise.all
+      await Promise.all(operations);
     } catch (error) {
       this.logger.error(
         `Failed to save emails to database: ${error.message}`,
