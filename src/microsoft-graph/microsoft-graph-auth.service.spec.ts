@@ -81,24 +81,30 @@ describe('MicrosoftGraphAuthService', () => {
       });
     });
 
-    // it('should log error when Microsoft Graph credentials are not configured', async () => {
-    //   jest.clearAllMocks();
-    //   mockConfigService.get.mockReturnValue(null);
+    it('should log error when Microsoft Graph credentials are not configured', async () => {
+      jest.clearAllMocks();
+      mockConfigService.get.mockReturnValue(null);
 
-    //   const loggerSpy = jest.spyOn(service['logger'], 'error');
+      // Create a new instance of the service to test initialization
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          MicrosoftGraphAuthService,
+          { provide: ConfigService, useValue: mockConfigService },
+        ],
+      }).compile();
 
-    //   // Re-initialize the service to trigger the error
-    //   await Test.createTestingModule({
-    //     providers: [
-    //       MicrosoftGraphAuthService,
-    //       { provide: ConfigService, useValue: mockConfigService },
-    //     ],
-    //   }).compile();
+      const newService = moduleRef.get<MicrosoftGraphAuthService>(
+        MicrosoftGraphAuthService,
+      );
+      const loggerSpy = jest.spyOn(newService['logger'], 'error');
 
-    //   expect(loggerSpy).toHaveBeenCalledWith(
-    //     'Microsoft Graph credentials are not properly configured',
-    //   );
-    // });
+      // Manually trigger initialization to ensure the error is logged
+      newService['initializeMsalClient']();
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Microsoft Graph credentials are not properly configured',
+      );
+    });
   });
 
   describe('getAccessToken', () => {
