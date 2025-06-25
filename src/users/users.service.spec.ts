@@ -918,4 +918,315 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('findByMicrosoftId', () => {
+    it('should use cache service to get or set user by Microsoft ID', async () => {
+      const user = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: {
+          accessToken: 'token123',
+          refreshToken: 'refresh123',
+        },
+      };
+
+      // Mock the getOrSet method to call the factory function and return its result
+      mockCacheService.getOrSet.mockImplementation(async (key, factory) => {
+        expect(key).toBe('user:microsoftId:microsoft-id-123');
+        return factory();
+      });
+
+      mockPrismaService.user.findFirst.mockResolvedValue(user);
+
+      const result = await service.findByMicrosoftId('microsoft-id-123');
+
+      expect(result).toEqual(user);
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'user:microsoftId:microsoft-id-123',
+        expect.any(Function),
+        300,
+      );
+      expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          microsoftId: 'microsoft-id-123',
+          isDeleted: false,
+        },
+      });
+    });
+
+    it('should return cached user when available', async () => {
+      const cachedUser = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: {
+          accessToken: 'token123',
+          refreshToken: 'refresh123',
+        },
+      };
+
+      // Mock the getOrSet method to return the cached value without calling the factory
+      mockCacheService.getOrSet.mockResolvedValue(cachedUser);
+
+      const result = await service.findByMicrosoftId('microsoft-id-123');
+
+      expect(result).toEqual(cachedUser);
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'user:microsoftId:microsoft-id-123',
+        expect.any(Function),
+        300,
+      );
+      expect(prismaService.user.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('should return null when user is not found by Microsoft ID', async () => {
+      // Mock the getOrSet method to call the factory function which returns null
+      mockCacheService.getOrSet.mockImplementation(async (key, factory) => {
+        return factory();
+      });
+
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+
+      const result = await service.findByMicrosoftId(
+        'nonexistent-microsoft-id',
+      );
+
+      expect(result).toBeNull();
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'user:microsoftId:nonexistent-microsoft-id',
+        expect.any(Function),
+        300,
+      );
+      expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          microsoftId: 'nonexistent-microsoft-id',
+          isDeleted: false,
+        },
+      });
+    });
+  });
+
+  describe('updateMicrosoftInfo', () => {
+    const updateMicrosoftInfoDto = {
+      microsoftId: 'new-microsoft-id',
+      microsoftTokens: { accessToken: 'newToken', refreshToken: 'newRefresh' },
+    };
+
+    it('should update user Microsoft info, invalidate cache, and return user without password', async () => {
+      const existingUser = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        microsoftId: 'old-microsoft-id',
+        microsoftTokens: {
+          accessToken: 'oldToken',
+          refreshToken: 'oldRefresh',
+        },
+      };
+
+      const updatedUser = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        microsoftId: 'new-microsoft-id',
+        microsoftTokens: {
+          accessToken: 'newToken',
+          refreshToken: 'newRefresh',
+        },
+      };
+
+      // Mock the getOrSet method for findOne
+      mockCacheService.getOrSet.mockImplementation(async (key, factory) => {
+        return factory();
+      });
+
+      mockPrismaService.user.findFirst.mockResolvedValue(existingUser);
+      mockPrismaService.user.update.mockResolvedValue(updatedUser);
+
+      const result = await service.updateMicrosoftInfo(
+        '1',
+        updateMicrosoftInfoDto,
+      );
+
+      expect(result).toEqual({
+        id: '1',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        microsoftId: 'new-microsoft-id',
+        microsoftTokens: {
+          accessToken: 'newToken',
+          refreshToken: 'newRefresh',
+        },
+      });
+
+      // Verify cache invalidation
+      expect(cacheService.del).toHaveBeenCalledWith('user:1');
+      expect(cacheService.del).toHaveBeenCalledWith(
+        'user:microsoftId:new-microsoft-id',
+      );
+      expect(cacheService.del).toHaveBeenCalledWith('users:all');
+
+      expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+        where: { id: '1', isDeleted: false },
+      });
+      expect(prismaService.user.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: updateMicrosoftInfoDto,
+      });
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      // Mock the getOrSet method to throw NotFoundException
+      mockCacheService.getOrSet.mockImplementation(async (key, factory) => {
+        return factory();
+      });
+
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+
+      await expect(
+        service.updateMicrosoftInfo('1', updateMicrosoftInfoDto),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'user:1',
+        expect.any(Function),
+        300,
+      );
+      expect(prismaService.user.update).not.toHaveBeenCalled();
+      expect(cacheService.del).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('createMicrosoftUser', () => {
+    const createMicrosoftUserDto = {
+      email: 'microsoft@example.com',
+      firstName: 'Microsoft',
+      lastName: 'User',
+      microsoftId: 'microsoft-id-123',
+      microsoftTokens: { accessToken: 'token123', refreshToken: 'refresh123' },
+    };
+
+    const hashedPassword = 'hashedRandomPassword';
+
+    const createdMicrosoftUser = {
+      id: '1',
+      email: 'microsoft@example.com',
+      password: hashedPassword,
+      firstName: 'Microsoft',
+      lastName: 'User',
+      role: Role.USER,
+      isDeleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      microsoftId: 'microsoft-id-123',
+      microsoftTokens: { accessToken: 'token123', refreshToken: 'refresh123' },
+    };
+
+    it('should create a new Microsoft user and return it without password', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
+      mockPrismaService.user.create.mockResolvedValue(createdMicrosoftUser);
+
+      // Mock Math.random to return a predictable value for the random password
+      const originalMathRandom = Math.random;
+      Math.random = jest.fn().mockReturnValue(0.5);
+
+      const result = await service.createMicrosoftUser(createMicrosoftUserDto);
+
+      // Restore Math.random
+      Math.random = originalMathRandom;
+
+      expect(result).toEqual({
+        id: '1',
+        email: 'microsoft@example.com',
+        firstName: 'Microsoft',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: {
+          accessToken: 'token123',
+          refreshToken: 'refresh123',
+        },
+      });
+
+      expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          email: createMicrosoftUserDto.email,
+          isDeleted: false,
+        },
+      });
+      expect(bcrypt.hash).toHaveBeenCalledWith(expect.any(String), 10);
+      expect(prismaService.user.create).toHaveBeenCalledWith({
+        data: {
+          email: createMicrosoftUserDto.email,
+          firstName: createMicrosoftUserDto.firstName,
+          lastName: createMicrosoftUserDto.lastName,
+          password: hashedPassword,
+          microsoftId: createMicrosoftUserDto.microsoftId,
+          microsoftTokens: createMicrosoftUserDto.microsoftTokens,
+        },
+      });
+      expect(cacheService.del).toHaveBeenCalledWith('users:all');
+    });
+
+    it('should throw ConflictException if email already exists', async () => {
+      const existingUser = {
+        id: '1',
+        email: 'microsoft@example.com',
+        password: 'existingHashedPassword',
+        firstName: 'Existing',
+        lastName: 'User',
+        role: Role.USER,
+        isDeleted: false,
+      };
+
+      mockPrismaService.user.findFirst.mockResolvedValue(existingUser);
+
+      await expect(
+        service.createMicrosoftUser(createMicrosoftUserDto),
+      ).rejects.toThrow(ConflictException);
+
+      expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          email: createMicrosoftUserDto.email,
+          isDeleted: false,
+        },
+      });
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      expect(prismaService.user.create).not.toHaveBeenCalled();
+      expect(cacheService.del).not.toHaveBeenCalled();
+    });
+  });
 });

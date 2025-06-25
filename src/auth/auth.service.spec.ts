@@ -15,6 +15,9 @@ describe('AuthService', () => {
 
   const mockUsersService = {
     findByEmail: jest.fn(),
+    findByMicrosoftId: jest.fn(),
+    updateMicrosoftInfo: jest.fn(),
+    createMicrosoftUser: jest.fn(),
   };
 
   const mockJwtService = {
@@ -211,6 +214,147 @@ describe('AuthService', () => {
         'wrongPassword',
       );
       expect(jwtService.sign).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('validateOrCreateMicrosoftUser', () => {
+    const microsoftUserData = {
+      email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      microsoftId: 'microsoft-id-123',
+      tokens: {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      },
+    };
+
+    const user = {
+      id: '1',
+      email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      role: Role.USER,
+      password: 'hashedPassword',
+      isDeleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      emailHost: 'smtp.example.com',
+      emailPassword: 'emailPassword',
+      imapPort: 993,
+      pop3Port: 995,
+      smtpPort: 587,
+      emailSecure: true,
+      emailUsername: 'test@example.com',
+      imapEnabled: false,
+      pop3Enabled: false,
+      smtpEnabled: true,
+      microsoftGraphEnabled: false,
+      microsoftId: 'microsoft-id-123',
+      microsoftTokens: {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      },
+    };
+
+    it('should return existing user when Microsoft ID is found', async () => {
+      jest.spyOn(usersService, 'findByMicrosoftId').mockResolvedValue(user);
+      jest.spyOn(usersService, 'updateMicrosoftInfo').mockResolvedValue(user);
+
+      const result =
+        await service.validateOrCreateMicrosoftUser(microsoftUserData);
+
+      expect(result).toEqual(user);
+      expect(usersService.findByMicrosoftId).toHaveBeenCalledWith(
+        'microsoft-id-123',
+      );
+      expect(usersService.updateMicrosoftInfo).toHaveBeenCalledWith('1', {
+        microsoftTokens: microsoftUserData.tokens,
+      });
+      expect(usersService.findByEmail).not.toHaveBeenCalled();
+      expect(usersService.createMicrosoftUser).not.toHaveBeenCalled();
+    });
+
+    it('should update existing user when email is found but no Microsoft ID', async () => {
+      const userWithoutMicrosoft = {
+        ...user,
+        microsoftId: null,
+        microsoftTokens: null,
+      };
+      jest.spyOn(usersService, 'findByMicrosoftId').mockResolvedValue(null);
+      jest
+        .spyOn(usersService, 'findByEmail')
+        .mockResolvedValue(userWithoutMicrosoft);
+      jest.spyOn(usersService, 'updateMicrosoftInfo').mockResolvedValue(user);
+
+      const result =
+        await service.validateOrCreateMicrosoftUser(microsoftUserData);
+
+      expect(result).toEqual(user);
+      expect(usersService.findByMicrosoftId).toHaveBeenCalledWith(
+        'microsoft-id-123',
+      );
+      expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(usersService.updateMicrosoftInfo).toHaveBeenCalledWith('1', {
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: microsoftUserData.tokens,
+      });
+      expect(usersService.createMicrosoftUser).not.toHaveBeenCalled();
+    });
+
+    it('should create new user when neither Microsoft ID nor email is found', async () => {
+      jest.spyOn(usersService, 'findByMicrosoftId').mockResolvedValue(null);
+      jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+      jest.spyOn(usersService, 'createMicrosoftUser').mockResolvedValue(user);
+
+      const result =
+        await service.validateOrCreateMicrosoftUser(microsoftUserData);
+
+      expect(result).toEqual(user);
+      expect(usersService.findByMicrosoftId).toHaveBeenCalledWith(
+        'microsoft-id-123',
+      );
+      expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(usersService.createMicrosoftUser).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: microsoftUserData.tokens,
+      });
+      expect(usersService.updateMicrosoftInfo).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('generateTokenForMicrosoftUser', () => {
+    it('should generate JWT token for Microsoft user', () => {
+      const user = {
+        id: '1',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        role: Role.USER,
+        microsoftId: 'microsoft-id-123',
+        microsoftTokens: {
+          accessToken: 'access-token',
+          refreshToken: 'refresh-token',
+        },
+      };
+
+      jest.spyOn(jwtService, 'sign').mockReturnValue('jwt-token');
+
+      const result = service.generateTokenForMicrosoftUser(user);
+
+      expect(result).toEqual({
+        access_token: 'jwt-token',
+        user,
+      });
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        sub: '1',
+        email: 'test@example.com',
+        role: Role.USER,
+        microsoftId: 'microsoft-id-123',
+      });
     });
   });
 });
