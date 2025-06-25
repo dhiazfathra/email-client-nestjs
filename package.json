@@ -142,6 +142,11 @@
       "!**/auth/guards/jwt-auth.guard.ts",
       "!**/auth/guards/local-auth.guard.ts"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/src/microsoft-graph/test-outlook.ts"
+    ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [
       "text",
