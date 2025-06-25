@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { instanceToPlain } from 'class-transformer';
 import { EncryptionService } from '../encryption/encryption.service';
+import { MicrosoftGraphEmailService } from '../microsoft-graph/microsoft-graph-email.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailConfigDto } from './dto/email-config.dto';
 import { EmailService } from './email.service';
@@ -27,6 +28,12 @@ describe('Email Security Tests', () => {
   };
 
   beforeEach(async () => {
+    const mockMicrosoftGraphEmailService = {
+      getEmails: jest.fn(),
+      getEmailDetails: jest.fn(),
+      saveEmailsToDatabase: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailService,
@@ -43,6 +50,10 @@ describe('Email Security Tests', () => {
               }),
             },
           },
+        },
+        {
+          provide: MicrosoftGraphEmailService,
+          useValue: mockMicrosoftGraphEmailService,
         },
         {
           provide: EncryptionService,

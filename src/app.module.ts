@@ -10,6 +10,7 @@ import { EmailModule } from './email/email.module';
 import { EncryptionModule } from './encryption/encryption.module';
 import { HealthModule } from './health/health.module';
 import { MetricsMiddleware } from './health/metrics.middleware';
+import { MicrosoftGraphModule } from './microsoft-graph/microsoft-graph.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TestModule } from './test/test.module';
 import { TracingMiddleware } from './tracing/tracing.middleware';
@@ -37,6 +38,7 @@ import { UsersModule } from './users/users.module';
     TestModule,
     EmailModule,
     EncryptionModule,
+    MicrosoftGraphModule,
   ],
   controllers: [AppController],
   providers: [AppService],

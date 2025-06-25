@@ -27,7 +27,7 @@ module.exports = [
       node: true,
       jest: true,
     },
-    ignorePatterns: ['.eslintrc.js'],
+    ignorePatterns: ['**/*.js'],
     rules: {
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
@@ -43,4 +43,11 @@ module.exports = [
       ],
     },
   }),
+  {
+    // Configuration specifically for test files
+    files: ['**/*.test*', '**/*.spec*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ];

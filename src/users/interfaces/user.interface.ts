@@ -1,3 +1,5 @@
+import { JsonValue } from '@prisma/client/runtime/library';
+
 /**
  * User interface representing a user entity without the password
  */
@@ -9,6 +11,15 @@ export interface User {
   role: string;
   createdAt?: Date;
   updatedAt?: Date;
+  microsoftId?: string;
+  microsoftTokens?: JsonValue;
+}
+
+/**
+ * User interface representing a user entity with the password
+ */
+export interface UserWithPassword extends User {
+  password: string;
 }
 
 /**

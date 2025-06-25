@@ -55,9 +55,8 @@ describe('PrismaService', () => {
   describe('createEncryptionMiddleware', () => {
     let middleware: (
       params: Prisma.MiddlewareParams,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       next: (params: Prisma.MiddlewareParams) => Promise<any>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) => Promise<any>;
     let mockNext: jest.Mock;
 
