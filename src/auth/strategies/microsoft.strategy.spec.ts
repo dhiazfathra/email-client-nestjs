@@ -73,8 +73,8 @@ describe('MicrosoftStrategy', () => {
 
       // Recreate the strategy with the new mock
       const _strategy = new MicrosoftStrategy(
-        configService as unknown as ConfigService,
-        authService as unknown as AuthService,
+        configService as ConfigService,
+        authService as AuthService,
       );
 
       // Default URL should be used (can't directly test private properties, but we can verify the mock was called)
