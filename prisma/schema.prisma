@@ -28,6 +28,8 @@ model User {
   pop3Enabled           Boolean? @default(false)
   smtpEnabled           Boolean? @default(false)
   microsoftGraphEnabled Boolean? @default(false)
+  microsoftId           String?
+  microsoftTokens       Json?
   emails                Email[]
 
   @@index([isDeleted])
@@ -58,11 +60,11 @@ model Email {
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([messageId, userId], name: "messageId_userId")
   @@index([userId])
   @@index([isDeleted])
   @@index([folder])
   @@index([receivedAt])
-  @@unique([messageId, userId], name: "messageId_userId")
 }
 
 enum Role {

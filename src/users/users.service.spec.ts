@@ -68,6 +68,8 @@ describe('UsersService', () => {
     firstName: 'Test',
     lastName: 'User',
     role: Role.USER,
+    microsoftId: null,
+    microsoftTokens: null,
   };
 
   describe('create', () => {
@@ -84,6 +86,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
         // isDeleted: false,
         // createdAt: expect.any(Date),
         // updatedAt: expect.any(Date),
@@ -118,6 +122,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       });
       expect(prismaService.user.findFirst).toHaveBeenCalledWith({
         where: {
@@ -141,7 +147,23 @@ describe('UsersService', () => {
         lastName: 'User',
         email: 'test@example.com',
         password: 'hashedPassword',
+        role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailHost: 'smtp.example.com',
+        emailPassword: 'emailPassword',
+        imapPort: 993,
+        pop3Port: 995,
+        smtpPort: 587,
+        emailSecure: true,
+        emailUsername: 'test@example.com',
+        imapEnabled: false,
+        pop3Enabled: false,
+        smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       mockPrismaService.user.findFirst.mockResolvedValue(existingUser);
@@ -171,6 +193,8 @@ describe('UsersService', () => {
           password: 'hashedPassword1',
           name: 'User 1',
           role: Role.USER,
+          microsoftId: null,
+          microsoftTokens: null,
         },
         {
           id: '2',
@@ -178,6 +202,8 @@ describe('UsersService', () => {
           password: 'hashedPassword2',
           name: 'User 2',
           role: 'ADMIN',
+          microsoftId: null,
+          microsoftTokens: null,
         },
       ];
 
@@ -187,12 +213,16 @@ describe('UsersService', () => {
           email: 'user1@example.com',
           name: 'User 1',
           role: Role.USER,
+          microsoftId: null,
+          microsoftTokens: null,
         },
         {
           id: '2',
           email: 'user2@example.com',
           name: 'User 2',
           role: 'ADMIN',
+          microsoftId: null,
+          microsoftTokens: null,
         },
       ];
 
@@ -222,6 +252,8 @@ describe('UsersService', () => {
           email: 'user1@example.com',
           name: 'User 1',
           role: Role.USER,
+          microsoftId: null,
+          microsoftTokens: null,
         },
       ];
 
@@ -245,6 +277,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method to return the cached value without calling the factory
@@ -290,6 +324,22 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailHost: 'smtp.example.com',
+        emailPassword: 'emailPassword',
+        imapPort: 993,
+        pop3Port: 995,
+        smtpPort: 587,
+        emailSecure: true,
+        emailUsername: 'test@example.com',
+        imapEnabled: false,
+        pop3Enabled: false,
+        smtpEnabled: true,
+        microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method to call the factory function and return its result
@@ -324,6 +374,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method to return the cached value without calling the factory
@@ -379,6 +431,22 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailHost: 'smtp.example.com',
+        emailPassword: 'emailPassword',
+        imapPort: 993,
+        pop3Port: 995,
+        smtpPort: 587,
+        emailSecure: true,
+        emailUsername: 'test@example.com',
+        imapEnabled: false,
+        pop3Enabled: false,
+        smtpEnabled: true,
+        microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       const updatedUser = {
@@ -388,6 +456,22 @@ describe('UsersService', () => {
         firstName: 'Updated',
         lastName: 'Name',
         role: Role.USER,
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailHost: 'smtp.example.com',
+        emailPassword: 'emailPassword',
+        imapPort: 993,
+        pop3Port: 995,
+        smtpPort: 587,
+        emailSecure: true,
+        emailUsername: 'test@example.com',
+        imapEnabled: false,
+        pop3Enabled: false,
+        smtpEnabled: true,
+        microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method for findOne
@@ -406,6 +490,22 @@ describe('UsersService', () => {
         firstName: 'Updated',
         lastName: 'Name',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        isDeleted: false,
+        emailHost: 'smtp.example.com',
+        emailPassword: 'emailPassword',
+        imapPort: 993,
+        pop3Port: 995,
+        smtpPort: 587,
+        emailSecure: true,
+        emailUsername: 'test@example.com',
+        imapEnabled: false,
+        pop3Enabled: false,
+        smtpEnabled: true,
+        microsoftGraphEnabled: false,
       });
 
       // Verify cache invalidation
@@ -429,6 +529,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       const updateWithEmailDto = {
@@ -442,6 +544,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method for findOne
@@ -463,6 +567,8 @@ describe('UsersService', () => {
         firstName: 'Test',
         lastName: 'User',
         role: Role.USER,
+        microsoftId: null,
+        microsoftTokens: null,
       });
 
       // Verify cache invalidation
@@ -521,6 +627,8 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       const updateWithEmailDto = {
@@ -590,6 +698,8 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       const updateWithPasswordDto = {
@@ -617,6 +727,8 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method for findOne
@@ -652,6 +764,8 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       });
 
       // Verify cache invalidation
@@ -689,6 +803,8 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       // Mock the getOrSet method for findOne
@@ -759,7 +875,6 @@ describe('UsersService', () => {
         password,
         firstName: 'Test',
         lastName: 'User',
-        role: Role.USER,
       };
 
       const mockCreatedUser = {
@@ -783,19 +898,19 @@ describe('UsersService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(null); // No existing user
-      jest
-        .spyOn(prismaService.user, 'create')
-        .mockResolvedValue(mockCreatedUser);
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      mockPrismaService.user.create.mockResolvedValue(mockCreatedUser);
 
       await service.create(createUserDto);
 
       // Verify bcrypt was called with the correct parameters
-      expect(bcrypt.hash).toHaveBeenCalledWith(password, 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith(createUserDto.password, 10);
       // Verify the create was called with the hashed password
-      expect(prismaService.user.create).toHaveBeenCalledWith({
+      expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: {
           ...createUserDto,
           password: hashedPassword,

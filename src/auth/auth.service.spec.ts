@@ -66,6 +66,8 @@ describe('AuthService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(user);
@@ -93,6 +95,8 @@ describe('AuthService', () => {
         imapEnabled: false,
         pop3Enabled: false,
         smtpEnabled: true,
+        microsoftId: null,
+        microsoftTokens: null,
       });
       expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
       expect(bcrypt.compare).toHaveBeenCalledWith('password', 'hashedPassword');
@@ -130,6 +134,8 @@ describe('AuthService', () => {
         pop3Enabled: false,
         smtpEnabled: true,
         microsoftGraphEnabled: false,
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(user);
@@ -160,6 +166,8 @@ describe('AuthService', () => {
         isDeleted: false,
         createdAt: new Date(),
         updatedAt: new Date(),
+        microsoftId: null,
+        microsoftTokens: null,
       };
 
       const loginDto = {
