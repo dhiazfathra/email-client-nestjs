@@ -37,6 +37,7 @@
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the app](#running-the-app)
+- [Deno Support](#deno-support)
 - [API Documentation](#api-documentation)
   - [Standard Swagger UI](#standard-swagger-ui)
   - [Scalar API Reference](#scalar-api-reference)
@@ -156,6 +157,26 @@ $ npm run start:dev
 # Production mode
 $ npm run start:prod
 ```
+
+## Deno Support
+
+This project supports deployment using Deno and deno deployctl. For detailed instructions, see [DENO.md](DENO.md).
+
+```bash
+# Run locally with Deno
+$ deno task dev
+
+# Deploy to Deno Deploy
+$ deno task deploy
+```
+
+To use Deno with this project:
+
+1. Install Deno and deployctl
+2. Configure your environment variables in Deno Deploy
+3. Deploy using `deno task deploy`
+
+See [DENO.md](DENO.md) for complete documentation on Deno support.
 
 ## API Documentation
 

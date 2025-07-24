@@ -1,0 +1,31 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-env --unstable-kv --unstable-worker-options --unstable-sloppy-imports src/deno-main.ts",
+    "dev": "deno run --watch --allow-net --allow-read --allow-env --unstable-kv --unstable-worker-options --unstable-sloppy-imports src/deno-main.ts",
+    "deploy": "deployctl deploy --project=email-client-nestjs --entrypoint=src/deno-main.ts --unstable-sloppy-imports"
+  },
+  "imports": {
+    "@nestjs/common": "npm:@nestjs/common@11.1.5",
+    "@nestjs/core": "npm:@nestjs/core@11.1.5",
+    "@nestjs/platform-express": "npm:@nestjs/platform-express@11.1.5",
+    "@nestjs/config": "npm:@nestjs/config@4.0.2",
+    "@nestjs/swagger": "npm:@nestjs/swagger@11.2.0",
+    "@nestjs/throttler": "npm:@nestjs/throttler@6.4.0",
+    "@nestjs/cache-manager": "npm:@nestjs/cache-manager@2.2.0",
+    "@scalar/nestjs-api-reference": "npm:@scalar/nestjs-api-reference@0.5.11",
+    "reflect-metadata": "npm:reflect-metadata@0.2.2",
+    "rxjs": "npm:rxjs@7.8.2",
+    "express-session": "npm:express-session@1.18.2",
+    "express": "npm:express@4.18.2",
+    "bcrypt": "npm:bcrypt@5.1.1",
+    "crypto": "node:crypto",
+    "cache-manager": "npm:cache-manager@7.0.1"
+  },
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowImportingTsExtensions": true,
+    "lib": ["deno.window"]
+  },
+  "nodeModulesDir": "auto"
+}

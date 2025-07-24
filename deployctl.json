@@ -1,0 +1,8 @@
+{
+  "project": "email-client-nestjs",
+  "entrypoint": "src/deno-main.ts",
+  "import_map": "./deno.json",
+  "env": {
+    "PORT": "8000"
+  }
+}
