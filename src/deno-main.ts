@@ -18,9 +18,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
 // Import application modules
-import { DenoMinimalAppModule } from './deno-minimal-app.module';
 import { RateLimitGuard } from './common/guards/throttler.guard';
 import { CustomScalars } from './common/scalars/index';
+import { DenoMinimalAppModule } from './deno-minimal-app.module';
 
 // Deno-specific session handling (simplified for Deno compatibility)
 const session = {
