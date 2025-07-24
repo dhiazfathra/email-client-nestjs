@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { CacheService } from '../cache/cache.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMicrosoftUserDto } from './dto/create-microsoft-user.dto';
@@ -219,8 +220,8 @@ export class UsersService {
       throw new ConflictException('Email already in use');
     }
 
-    // Generate a random password for Microsoft users (they will use OAuth to login)
-    const randomPassword = Math.random().toString(36).slice(-10);
+    // Generate a cryptographically secure random password for Microsoft users (they will use OAuth to login)
+    const randomPassword = crypto.randomBytes(16).toString('hex').slice(0, 16);
     const hashedPassword = await this.hashPassword(randomPassword);
 
     // Create the user with Microsoft info

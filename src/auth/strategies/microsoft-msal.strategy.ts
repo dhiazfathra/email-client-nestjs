@@ -94,7 +94,9 @@ export class MicrosoftMsalStrategy extends PassportStrategy(
    */
   async authenticate(req: Request, _options?: unknown): Promise<void> {
     try {
-      if (req.query.code) {
+      // Check if this is a callback request with both code and state parameters
+      // Both parameters are required for a valid OAuth callback
+      if (req.query.code && req.query.state && req.session.pkceCodes?.state) {
         // Handle the callback with authorization code
         await this.handleCallback(req);
       } else {
