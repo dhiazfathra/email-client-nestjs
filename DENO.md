@@ -1,6 +1,6 @@
 # Deno Support for Email Client NestJS
 
-This project now supports deployment using Deno and deno deployctl. This document explains how to use the Deno integration.
+This project now supports deployment using Deno and deno deployctl. This document explains how to use the Deno integration and the compatibility approach taken.
 
 ## Prerequisites
 
@@ -28,10 +28,14 @@ This project now supports deployment using Deno and deno deployctl. This documen
 To run the application locally using Deno:
 
 ```bash
+# Run in standard mode
+deno task start
+
+# Run in watch mode for development
 deno task dev
 ```
 
-This will start the application in watch mode, automatically reloading when files change.
+This will start a minimal version of the application that is compatible with Deno. Note that the Deno version uses a streamlined module structure that avoids certain Node.js-specific dependencies.
 
 ## Deployment to Deno Deploy
 
@@ -48,6 +52,39 @@ deployctl deploy --project=email-client-nestjs --entrypoint=src/deno-main.ts
 ```
 
 ## Configuration
+
+The Deno version of the application uses environment variables for configuration. You can set these in the Deno Deploy dashboard or locally using the `.env` file.
+
+### Key Differences in Deno Version
+
+1. **Minimal Module Structure**: The Deno version uses `DenoMinimalAppModule` instead of the full `AppModule` to avoid Node.js-specific dependencies.
+
+2. **Cache Implementation**: A custom in-memory cache implementation is used instead of `cache-manager` which is not fully compatible with Deno.
+
+3. **Import Maps**: The `deno.json` file contains import maps that redirect certain Node.js modules to Deno-compatible alternatives.
+
+4. **Limited Features**: Some features available in the Node.js version may be limited or unavailable in the Deno version due to compatibility constraints.
+
+## Compatibility Notes
+
+### What Works
+- Basic API endpoints
+- Configuration via environment variables
+- Rate limiting
+- API documentation (Swagger and Scalar)
+
+### What Doesn't Work
+- Redis caching (replaced with in-memory cache)
+- Some Node.js-specific modules and features
+
+## Troubleshooting
+
+If you encounter issues with Deno compatibility:
+
+1. Check the console for specific error messages
+2. Ensure you're using the latest version of Deno
+3. If you see import errors, you may need to update the import maps in `deno.json`
+4. For deployment issues, verify your Deno Deploy authentication
 
 The Deno configuration is defined in the following files:
 
