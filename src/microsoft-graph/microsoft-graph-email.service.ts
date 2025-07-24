@@ -379,7 +379,7 @@ export class MicrosoftGraphEmailService {
   private async saveEmailsToDatabase(
     emails: Partial<Email>[],
     userId: string,
-  ): Promise<void> {
+  ): Promise<Email[]> {
     try {
       // Build an array of Prisma operations without executing them immediately
       const operations = [];
@@ -465,7 +465,11 @@ export class MicrosoftGraphEmailService {
       }
 
       // Execute all operations in parallel using Promise.all
-      await Promise.all(operations);
+      const results = await Promise.all(operations);
+
+      // Flatten the results if they're from transactions
+      const savedEmails = results.flat().filter(Boolean) as Email[];
+      return savedEmails;
     } catch (error) {
       this.logger.error(
         `Failed to save emails to database: ${error.message}`,

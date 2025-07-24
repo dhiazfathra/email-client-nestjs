@@ -453,7 +453,7 @@ describe('MicrosoftGraphEmailService', () => {
   });
 
   describe('fetchEmails', () => {
-    it.skip('should fetch emails successfully with pagination', async () => {
+    it('should fetch emails successfully with pagination', async () => {
       // Arrange
       const userId = 'test-user-id';
       const options: GetEmailsDto = {
@@ -520,8 +520,14 @@ describe('MicrosoftGraphEmailService', () => {
       ];
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockGraphClient.get.mockImplementation((path) => {
-        if (path.includes('$count')) {
+      mockGraphClient.get.mockImplementation(() => {
+        // The path is not directly passed to the get method in the actual implementation
+        // Instead, we need to check what was passed to the api method
+        const apiCallArg =
+          mockGraphClient.api.mock.calls[
+            mockGraphClient.api.mock.calls.length - 1
+          ][0];
+        if (apiCallArg && apiCallArg.includes('$count')) {
           return '50'; // Total count
         } else {
           return { value: mockGraphEmails };
