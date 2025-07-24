@@ -8,7 +8,7 @@
     "npm:@eslint/js@^9.31.0": "9.31.0",
     "npm:@golevelup/ts-jest@0.7": "0.7.0",
     "npm:@microsoft/microsoft-graph-client@^3.0.7": "3.0.7",
-    "npm:@nestjs/cache-manager@2.2.0": "2.2.0_@nestjs+common@11.1.5__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2_@nestjs+core@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+platform-express@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+core@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__reflect-metadata@0.2.2__rxjs@7.8.2__class-transformer@0.5.1__class-validator@0.14.2_cache-manager@5.2.4_reflect-metadata@0.2.2_rxjs@7.8.2_class-transformer@0.5.1_class-validator@0.14.2_@nestjs+platform-express@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+core@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+platform-express@11.1.5___reflect-metadata@0.2.2___rxjs@7.8.2___class-transformer@0.5.1___class-validator@0.14.2__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2",
+    "npm:@nestjs/cache-manager@2.2.0": "2.2.0_@nestjs+common@11.1.5__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2_@nestjs+core@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+platform-express@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+core@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__reflect-metadata@0.2.2__rxjs@7.8.2__class-transformer@0.5.1__class-validator@0.14.2_cache-manager@7.0.1_reflect-metadata@0.2.2_rxjs@7.8.2_class-transformer@0.5.1_class-validator@0.14.2_@nestjs+platform-express@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+core@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+platform-express@11.1.5___reflect-metadata@0.2.2___rxjs@7.8.2___class-transformer@0.5.1___class-validator@0.14.2__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2",
     "npm:@nestjs/cache-manager@^3.0.1": "3.0.1_@nestjs+common@11.1.5__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2_@nestjs+core@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+platform-express@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+core@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__reflect-metadata@0.2.2__rxjs@7.8.2__class-transformer@0.5.1__class-validator@0.14.2_cache-manager@7.0.1_keyv@5.4.0_rxjs@7.8.2_class-transformer@0.5.1_class-validator@0.14.2_reflect-metadata@0.2.2_@nestjs+platform-express@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+core@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+platform-express@11.1.5___reflect-metadata@0.2.2___rxjs@7.8.2___class-transformer@0.5.1___class-validator@0.14.2__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2",
     "npm:@nestjs/cli@^11.0.7": "11.0.7_chokidar@4.0.3_@types+node@24.1.0_typescript@5.8.3_webpack@5.99.6",
     "npm:@nestjs/common@11.1.5": "11.1.5_class-transformer@0.5.1_class-validator@0.14.2_reflect-metadata@0.2.2_rxjs@7.8.2",
@@ -55,7 +55,6 @@
     "npm:bcrypt@5.1.1": "5.1.1",
     "npm:bcrypt@6": "6.0.0",
     "npm:cache-manager-redis-store@^3.0.1": "3.0.1",
-    "npm:cache-manager@5.2.4": "5.2.4",
     "npm:cache-manager@^7.0.1": "7.0.1",
     "npm:class-transformer@~0.5.1": "0.5.1",
     "npm:class-validator@~0.14.2": "0.14.2",
@@ -1316,12 +1315,12 @@
         "@tybys/wasm-util"
       ]
     },
-    "@nestjs/cache-manager@2.2.0_@nestjs+common@11.1.5__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2_@nestjs+core@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+platform-express@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+core@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__reflect-metadata@0.2.2__rxjs@7.8.2__class-transformer@0.5.1__class-validator@0.14.2_cache-manager@5.2.4_reflect-metadata@0.2.2_rxjs@7.8.2_class-transformer@0.5.1_class-validator@0.14.2_@nestjs+platform-express@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+core@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+platform-express@11.1.5___reflect-metadata@0.2.2___rxjs@7.8.2___class-transformer@0.5.1___class-validator@0.14.2__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2": {
+    "@nestjs/cache-manager@2.2.0_@nestjs+common@11.1.5__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2_@nestjs+core@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+platform-express@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+core@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__reflect-metadata@0.2.2__rxjs@7.8.2__class-transformer@0.5.1__class-validator@0.14.2_cache-manager@7.0.1_reflect-metadata@0.2.2_rxjs@7.8.2_class-transformer@0.5.1_class-validator@0.14.2_@nestjs+platform-express@11.1.5__@nestjs+common@11.1.5___class-transformer@0.5.1___class-validator@0.14.2___reflect-metadata@0.2.2___rxjs@7.8.2__@nestjs+core@11.1.5___@nestjs+common@11.1.5____class-transformer@0.5.1____class-validator@0.14.2____reflect-metadata@0.2.2____rxjs@7.8.2___@nestjs+platform-express@11.1.5___reflect-metadata@0.2.2___rxjs@7.8.2___class-transformer@0.5.1___class-validator@0.14.2__class-transformer@0.5.1__class-validator@0.14.2__reflect-metadata@0.2.2__rxjs@7.8.2": {
       "integrity": "sha512-hAcX1f5moiK7B8KnPZVfV/up4nrZnaeN6w0o3M+UzNJNlw6bsIH6bn7jpGqzySAWPD9iYE/rg5IxTe1vSWyWZg==",
       "dependencies": [
         "@nestjs/common",
         "@nestjs/core",
-        "cache-manager@5.2.4",
+        "cache-manager",
         "reflect-metadata",
         "rxjs@7.8.2"
       ]
@@ -1331,7 +1330,7 @@
       "dependencies": [
         "@nestjs/common",
         "@nestjs/core",
-        "cache-manager@7.0.1",
+        "cache-manager",
         "keyv@5.4.0",
         "rxjs@7.8.2"
       ]
@@ -4185,13 +4184,6 @@
         "redis@4.7.1_@redis+client@1.6.1"
       ]
     },
-    "cache-manager@5.2.4": {
-      "integrity": "sha512-gkuCjug16NdGvKm/sydxGVx17uffrSWcEe2xraBtwRCgdYcFxwJAla4OYpASAZT2yhSoxgDiWL9XH6IAChcZJA==",
-      "dependencies": [
-        "lodash.clonedeep",
-        "lru-cache@10.4.3"
-      ]
-    },
     "cache-manager@7.0.1": {
       "integrity": "sha512-Hd7FOyTtwhwLgkKeKQWEw6Ixj63VKuUWYwkGgL6g6Q7eISW6uxci5+DtUXlqI0gtbLCPPdhL1+HP9Zht27DbrA==",
       "dependencies": [
@@ -5155,7 +5147,7 @@
         "send@0.18.0",
         "serve-static@1.15.0",
         "setprototypeof",
-        "statuses@2.0.1",
+        "statuses",
         "type-is@1.6.18",
         "utils-merge",
         "vary"
@@ -5188,7 +5180,7 @@
         "router",
         "send@1.2.0",
         "serve-static@2.2.0",
-        "statuses@2.0.2",
+        "statuses",
         "type-is@2.0.1",
         "vary"
       ]
@@ -5309,7 +5301,7 @@
         "escape-html",
         "on-finished",
         "parseurl",
-        "statuses@2.0.1",
+        "statuses",
         "unpipe"
       ]
     },
@@ -5321,7 +5313,7 @@
         "escape-html",
         "on-finished",
         "parseurl",
-        "statuses@2.0.2"
+        "statuses"
       ]
     },
     "find-up-simple@1.0.1": {
@@ -5787,7 +5779,7 @@
         "depd",
         "inherits",
         "setprototypeof",
-        "statuses@2.0.1",
+        "statuses",
         "toidentifier"
       ]
     },
@@ -6906,9 +6898,6 @@
     },
     "lodash.capitalize@4.2.1": {
       "integrity": "sha512-kZzYOKspf8XVX5AvmQF94gQW0lejFVgb80G85bU4ZWzoJ6C03PQg3coYAUpSTpQWelrZELd3XWgHzw4Ck5kaIw=="
-    },
-    "lodash.clonedeep@4.5.0": {
-      "integrity": "sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ=="
     },
     "lodash.escaperegexp@4.1.2": {
       "integrity": "sha512-TM9YBvyC84ZxE3rgfefxUWiQKLilstD6k7PTGt6wfbtXF8ixIJLOL3VYyV/z+ZiPLsVxAsKAFVwWlWeb2Y8Yyw=="
@@ -8564,7 +8553,7 @@
         "ms@2.1.3",
         "on-finished",
         "range-parser",
-        "statuses@2.0.1"
+        "statuses"
       ]
     },
     "send@1.2.0": {
@@ -8580,7 +8569,7 @@
         "ms@2.1.3",
         "on-finished",
         "range-parser",
-        "statuses@2.0.2"
+        "statuses"
       ]
     },
     "serialize-javascript@6.0.2": {
@@ -8817,9 +8806,6 @@
     },
     "statuses@2.0.1": {
       "integrity": "sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ=="
-    },
-    "statuses@2.0.2": {
-      "integrity": "sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw=="
     },
     "stream-combiner2@1.1.1": {
       "integrity": "sha512-3PnJbYgS56AeWgtKF5jtJRT6uFJe56Z0Hc5Ngg/6sI6rIt8iiMBTa9cvdyFfpMQjaVHr8dusbNeFGIIonxOvKw==",
@@ -9855,7 +9841,6 @@
       "npm:@nestjs/throttler@6.4.0",
       "npm:@scalar/nestjs-api-reference@0.5.11",
       "npm:bcrypt@5.1.1",
-      "npm:cache-manager@5.2.4",
       "npm:express-session@1.18.2",
       "npm:express@4.18.2",
       "npm:reflect-metadata@0.2.2",

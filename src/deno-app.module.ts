@@ -1,19 +1,21 @@
-import { CacheModule } from '@nestjs/cache-manager';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { DenoCacheService } from './cache/deno-cache.service';
 import { EmailModule } from './email/email.module';
 import { MicrosoftGraphModule } from './microsoft-graph/microsoft-graph.module';
 import { UsersModule } from './users/users.module';
+import { DenoCacheModule } from './cache/deno-cache.module';
+// Import Deno-compatible modules only
+// Exclude modules that depend on Node.js-specific features like RedisCacheModule, PrismaModule, etc.
 
 /**
  * Main application module for Deno compatibility
  * This is a modified version of AppModule that uses DenoCacheService
+ * and excludes Node.js-specific modules
  */
 @Module({
   imports: [
@@ -23,9 +25,7 @@ import { UsersModule } from './users/users.module';
     }),
 
     // Cache configuration
-    CacheModule.register({
-      isGlobal: true,
-    }),
+    DenoCacheModule,
 
     // Rate limiting
     ThrottlerModule.forRootAsync({
@@ -39,7 +39,7 @@ import { UsersModule } from './users/users.module';
       ],
     }),
 
-    // Feature modules
+    // Feature modules - only include Deno-compatible modules
     AuthModule,
     UsersModule,
     EmailModule,
@@ -52,9 +52,12 @@ import { UsersModule } from './users/users.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    // Use Deno-compatible cache service
-    DenoCacheService,
   ],
-  exports: [DenoCacheService],
 })
-export class DenoAppModule {}
+export class DenoAppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Add simplified middleware configuration for Deno
+    // No metrics or tracing middleware for Deno version
+    consumer.apply().forRoutes('*');
+  }
+}
