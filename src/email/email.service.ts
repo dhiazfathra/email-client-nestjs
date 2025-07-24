@@ -6,8 +6,9 @@ import { JSDOM } from 'jsdom';
 import { simpleParser } from 'mailparser';
 import * as nodemailer from 'nodemailer';
 import * as POP3Client from 'poplib';
+import { MicrosoftGraphEmailService } from '../microsoft-graph/microsoft-graph-email.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { EmailConfigDto } from './dto/email-config.dto';
+import { EmailConfigDto, EmailProviderType } from './dto/email-config.dto';
 import { GetEmailsDto } from './dto/get-emails.dto';
 import { SendEmailDto } from './dto/send-email.dto';
 
@@ -15,7 +16,10 @@ import { SendEmailDto } from './dto/send-email.dto';
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly microsoftGraphEmailService: MicrosoftGraphEmailService,
+  ) {}
 
   /**
    * Get user's email configuration
@@ -75,6 +79,8 @@ export class EmailService {
         imapEnabled: emailConfig.imapEnabled,
         smtpEnabled: emailConfig.smtpEnabled,
         pop3Enabled: emailConfig.pop3Enabled,
+        microsoftGraphEnabled:
+          emailConfig.providerType === EmailProviderType.MICROSOFT_GRAPH,
       },
     });
 
@@ -89,19 +95,33 @@ export class EmailService {
       imapEnabled: updatedUser.imapEnabled,
       smtpEnabled: updatedUser.smtpEnabled,
       pop3Enabled: updatedUser.pop3Enabled,
+      providerType: updatedUser.microsoftGraphEnabled
+        ? EmailProviderType.MICROSOFT_GRAPH
+        : EmailProviderType.STANDARD,
     });
   }
 
   /**
-   * Send email using SMTP
+   * Send email using SMTP or Microsoft Graph API
    */
   async sendEmail(userId: string, emailData: SendEmailDto): Promise<Email> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
 
-    if (!user || !user.smtpEnabled) {
-      throw new NotFoundException('User not found or SMTP not enabled');
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    // Check if Microsoft Graph is enabled
+    if (user.microsoftGraphEnabled) {
+      this.logger.log('Using Microsoft Graph API to send email');
+      return this.microsoftGraphEmailService.sendEmail(userId, emailData);
+    }
+
+    // Otherwise use standard SMTP
+    if (!user.smtpEnabled) {
+      throw new NotFoundException('SMTP not enabled');
     }
 
     if (
@@ -168,9 +188,9 @@ export class EmailService {
   }
 
   /**
-   * Fetch emails using IMAP with pagination
+   * Fetch emails using the appropriate method (IMAP or Microsoft Graph)
    */
-  async fetchEmailsIMAP(
+  async fetchEmails(
     userId: string,
     options: GetEmailsDto,
   ): Promise<{ emails: Email[]; total: number; hasMore: boolean }> {
@@ -178,6 +198,41 @@ export class EmailService {
       where: { id: userId },
     });
 
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    // Check if Microsoft Graph is enabled
+    if (user.microsoftGraphEnabled) {
+      this.logger.log('Using Microsoft Graph API to fetch emails');
+      return this.microsoftGraphEmailService.fetchEmails(userId, options);
+    }
+
+    // Otherwise use IMAP if enabled
+    if (user.imapEnabled) {
+      return this.fetchEmailsIMAP(userId, options);
+    }
+
+    // Fall back to POP3 if IMAP is not enabled
+    if (user.pop3Enabled) {
+      return this.fetchEmailsPOP3(userId, options);
+    }
+
+    throw new NotFoundException('No email retrieval method is enabled');
+  }
+
+  /**
+   * Fetch emails using IMAP with pagination
+   */
+  private async fetchEmailsIMAP(
+    userId: string,
+    options: GetEmailsDto,
+  ): Promise<{ emails: Email[]; total: number; hasMore: boolean }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    // TODO: Consider to remove this check as there is not path to this branch
     if (!user || !user.imapEnabled) {
       throw new NotFoundException('User not found or IMAP not enabled');
     }

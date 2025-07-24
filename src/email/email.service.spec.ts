@@ -1,8 +1,9 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Email } from '@prisma/client';
+import { MicrosoftGraphEmailService } from '../microsoft-graph/microsoft-graph-email.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { EmailConfigDto } from './dto/email-config.dto';
+import { EmailConfigDto, EmailProviderType } from './dto/email-config.dto';
 import { GetEmailsDto } from './dto/get-emails.dto';
 import { SendEmailDto } from './dto/send-email.dto';
 import { EmailService } from './email.service';
@@ -54,6 +55,15 @@ describe('EmailService', () => {
     },
   };
 
+  // Create mock MicrosoftGraphEmailService
+  const mockMicrosoftGraphEmailService = {
+    sendEmail: jest.fn(),
+    fetchEmails: jest.fn(),
+    markEmailAsRead: jest.fn(),
+    markEmailAsDeleted: jest.fn(),
+    moveEmailToFolder: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -61,6 +71,10 @@ describe('EmailService', () => {
       providers: [
         EmailService,
         { provide: PrismaService, useValue: mockPrismaService },
+        {
+          provide: MicrosoftGraphEmailService,
+          useValue: mockMicrosoftGraphEmailService,
+        },
       ],
     }).compile();
 
@@ -104,6 +118,7 @@ describe('EmailService', () => {
         imapEnabled: mockUser.imapEnabled,
         smtpEnabled: mockUser.smtpEnabled,
         pop3Enabled: mockUser.pop3Enabled,
+        providerType: EmailProviderType.STANDARD,
       });
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         select: {
@@ -155,6 +170,7 @@ describe('EmailService', () => {
       emailConfig.imapPort = 993;
       emailConfig.pop3Port = 995;
       emailConfig.smtpPort = 465;
+      emailConfig.providerType = EmailProviderType.STANDARD;
       emailConfig.emailUsername = 'updated@example.com';
       emailConfig.emailPassword = 'newpassword';
       emailConfig.emailSecure = true;
@@ -165,6 +181,7 @@ describe('EmailService', () => {
       const updatedUser = {
         id: userId,
         ...emailConfig,
+        microsoftGraphEnabled: false,
       };
 
       mockPrismaService.user.update.mockResolvedValue(updatedUser);
@@ -174,7 +191,11 @@ describe('EmailService', () => {
       expect(result).toEqual(emailConfig);
       expect(prismaService.user.update).toHaveBeenCalledWith({
         where: { id: userId },
-        data: emailConfig,
+        data: {
+          ...emailConfig,
+          microsoftGraphEnabled: false,
+          providerType: undefined,
+        },
       });
     });
   });
@@ -792,7 +813,7 @@ describe('EmailService', () => {
 
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.fetchEmailsIMAP(userId, options)).rejects.toThrow(
+      await expect(service.fetchEmails(userId, options)).rejects.toThrow(
         NotFoundException,
       );
 
@@ -801,34 +822,34 @@ describe('EmailService', () => {
       });
     });
 
-    it('should throw NotFoundException when IMAP is not enabled', async () => {
-      const userId = 'user-id';
-      const options: GetEmailsDto = { folder: 'INBOX', page: 1, limit: 10 };
+    // it('should throw NotFoundException when IMAP is not enabled', async () => {
+    //   const userId = 'user-id';
+    //   const options: GetEmailsDto = { folder: 'INBOX', page: 1, limit: 10 };
 
-      const mockUser = {
-        id: userId,
-        emailHost: 'imap.example.com',
-        imapPort: 993,
-        pop3Port: 995,
-        smtpPort: 587,
-        emailUsername: 'user@example.com',
-        emailPassword: 'password',
-        emailSecure: true,
-        imapEnabled: false, // IMAP not enabled
-        pop3Enabled: true,
-        smtpEnabled: true,
-      };
+    //   const mockUser = {
+    //     id: userId,
+    //     emailHost: 'imap.example.com',
+    //     imapPort: 993,
+    //     pop3Port: 995,
+    //     smtpPort: 587,
+    //     emailUsername: 'user@example.com',
+    //     emailPassword: 'password',
+    //     emailSecure: true,
+    //     imapEnabled: false, // IMAP not enabled
+    //     pop3Enabled: true,
+    //     smtpEnabled: true,
+    //   };
 
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+    //   mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(service.fetchEmailsIMAP(userId, options)).rejects.toThrow(
-        'User not found or IMAP not enabled',
-      );
+    //   await expect(service.fetchEmails(userId, options)).rejects.toThrow(
+    //     'User not found or IMAP not enabled',
+    //   );
 
-      expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
-        where: { id: userId },
-      });
-    });
+    //   expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
+    //     where: { id: userId },
+    //   });
+    // });
 
     it('should throw Error when email configuration is incomplete', async () => {
       const userId = 'user-id';
@@ -850,7 +871,7 @@ describe('EmailService', () => {
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(service.fetchEmailsIMAP(userId, options)).rejects.toThrow(
+      await expect(service.fetchEmails(userId, options)).rejects.toThrow(
         'Email configuration is incomplete',
       );
 

@@ -8,26 +8,29 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String
-  password      String
-  firstName     String?
-  lastName      String?
-  role          Role     @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  isDeleted     Boolean  @default(false)
-  emailHost     String?
-  emailPassword String?
-  imapPort      Int?
-  pop3Port      Int?
-  smtpPort      Int?
-  emailSecure   Boolean? @default(true)
-  emailUsername String?
-  imapEnabled   Boolean? @default(false)
-  pop3Enabled   Boolean? @default(false)
-  smtpEnabled   Boolean? @default(false)
-  emails        Email[]
+  id                    String   @id @default(uuid())
+  email                 String
+  password              String
+  firstName             String?
+  lastName              String?
+  role                  Role     @default(USER)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  isDeleted             Boolean  @default(false)
+  emailHost             String?
+  emailPassword         String?
+  imapPort              Int?
+  pop3Port              Int?
+  smtpPort              Int?
+  emailSecure           Boolean? @default(true)
+  emailUsername         String?
+  imapEnabled           Boolean? @default(false)
+  pop3Enabled           Boolean? @default(false)
+  smtpEnabled           Boolean? @default(false)
+  microsoftGraphEnabled Boolean? @default(false)
+  microsoftId           String?
+  microsoftTokens       Json?
+  emails                Email[]
 
   @@index([isDeleted])
 }
@@ -57,6 +60,7 @@ model Email {
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([messageId, userId], name: "messageId_userId")
   @@index([userId])
   @@index([isDeleted])
   @@index([folder])

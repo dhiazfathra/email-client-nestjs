@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
-  Request,
   UseGuards,
+  Get,
+  Request,
+  Res,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -13,12 +15,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { User } from '../users/entities/user.entity';
+import { User } from '../users/interfaces/user.interface';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { MicrosoftAuthGuard } from './guards/microsoft-auth.guard';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -50,7 +54,17 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
-    type: User,
+    schema: {
+      example: {
+        id: 'uuid',
+        email: 'user@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
@@ -67,12 +81,63 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Profile retrieved successfully',
-    type: User,
+    schema: {
+      example: {
+        id: 'uuid',
+        email: 'user@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @ApiOperation({
+    summary: 'Microsoft OAuth login',
+    description: 'Initiate Microsoft OAuth authentication flow',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to Microsoft login page',
+  })
+  @UseGuards(MicrosoftAuthGuard)
+  @Get('microsoft/login')
+  microsoftLogin() {
+    // The guard will handle the authentication flow
+    // This route will redirect to Microsoft's login page
+    return { message: 'Redirecting to Microsoft login...' };
+  }
+
+  @ApiOperation({
+    summary: 'Microsoft OAuth callback',
+    description: 'Handle callback from Microsoft OAuth authentication',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @UseGuards(MicrosoftAuthGuard)
+  @Get('microsoft/callback')
+  async microsoftCallback(
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    // Cast the user to our User interface
+    const token = this.authService.generateTokenForMicrosoftUser(
+      req.user as unknown as User,
+    );
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?token=${token.access_token}`,
+    );
   }
 }

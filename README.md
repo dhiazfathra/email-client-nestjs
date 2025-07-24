@@ -57,19 +57,19 @@ A NestJS TypeScript starter project with user authentication, following best pra
 
 ## Features
 
-- 🔐 **Authentication** - JWT-based authentication system
-- 👤 **User Management** - Complete CRUD operations for users
-- 🔑 **Role-Based Access Control** - User and Admin roles with proper guards
-- 🗃️ **Database Integration** - PostgreSQL with Prisma ORM
-- 🚀 **Redis Caching** - Performance optimization with Redis-based caching
-- 🧪 **Chaos Testing** - Resilience testing with Redis fault injection
-- 🛡️ **Rate Limiting** - Protection against abuse and DoS attacks
-- 📊 **Bundle Analysis** - Monitor and optimize bundle size with Codecov integration
-- ✅ **Validation** - Request validation using class-validator
-- 🔄 **Environment Configuration** - Using dotenv and NestJS ConfigModule
-- 📚 **API Documentation** - Swagger/OpenAPI and Scalar API Reference
-- 📊 **Monitoring** - Grafana and Prometheus for metrics and monitoring
-- 🔍 **Distributed Tracing** - Jaeger for request tracing and performance analysis
+- **Authentication** - JWT-based authentication system
+- **User Management** - Complete CRUD operations for users
+- **Role-Based Access Control** - User and Admin roles with proper guards
+- **Database Integration** - PostgreSQL with Prisma ORM
+- **Redis Caching** - Performance optimization with Redis-based caching
+- **Chaos Testing** - Resilience testing with Redis fault injection
+- **Rate Limiting** - Protection against abuse and DoS attacks
+- **Bundle Analysis** - Monitor and optimize bundle size with Codecov integration
+- **Validation** - Request validation using class-validator
+- **Environment Configuration** - Using dotenv and NestJS ConfigModule
+- **API Documentation** - Swagger/OpenAPI and Scalar API Reference
+- **Monitoring** - Grafana and Prometheus for metrics and monitoring
+- **Distributed Tracing** - Jaeger for request tracing and performance analysis
 
 ## Technologies Used
 

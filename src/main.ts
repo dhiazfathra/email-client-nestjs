@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import * as session from 'express-session';
 import { AppModule } from './app.module';
 import { RateLimitGuard } from './common/guards/throttler.guard';
 import { CustomScalars } from './common/scalars';
@@ -21,6 +22,20 @@ async function bootstrap() {
 
   // Global prefix
   app.setGlobalPrefix('api');
+
+  // Configure session middleware for MSAL authentication
+  app.use(
+    session({
+      secret:
+        configService.get<string>('SESSION_SECRET') || 'msal-session-secret',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 1000, // 1 hour
+      },
+    }),
+  );
 
   // Global validation pipe
   app.useGlobalPipes(

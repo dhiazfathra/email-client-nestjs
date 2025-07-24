@@ -14,6 +14,7 @@ describe('EmailController', () => {
     getUserEmailConfig: jest.fn(),
     updateUserEmailConfig: jest.fn(),
     sendEmail: jest.fn(),
+    fetchEmails: jest.fn(),
     fetchEmailsIMAP: jest.fn(),
     fetchEmailsPOP3: jest.fn(),
     getEmailsFromDatabase: jest.fn(),
@@ -180,12 +181,12 @@ describe('EmailController', () => {
         hasMore: false,
       };
 
-      mockEmailService.fetchEmailsIMAP.mockResolvedValue(mockResponse);
+      mockEmailService.fetchEmails.mockResolvedValue(mockResponse);
 
       const result = await controller.fetchEmailsIMAP(mockUser, options);
 
       expect(result).toEqual(mockResponse);
-      expect(emailService.fetchEmailsIMAP).toHaveBeenCalledWith(
+      expect(emailService.fetchEmails).toHaveBeenCalledWith(
         mockUser.id,
         options,
       );
@@ -215,12 +216,12 @@ describe('EmailController', () => {
         hasMore: false,
       };
 
-      mockEmailService.fetchEmailsPOP3.mockResolvedValue(mockResponse);
+      mockEmailService.fetchEmails.mockResolvedValue(mockResponse);
 
       const result = await controller.fetchEmailsPOP3(mockUser, options);
 
       expect(result).toEqual(mockResponse);
-      expect(emailService.fetchEmailsPOP3).toHaveBeenCalledWith(
+      expect(emailService.fetchEmails).toHaveBeenCalledWith(
         mockUser.id,
         options,
       );

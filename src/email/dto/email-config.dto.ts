@@ -2,12 +2,18 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import {
   IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
   Max,
   Min,
 } from 'class-validator';
+
+export enum EmailProviderType {
+  STANDARD = 'standard',
+  MICROSOFT_GRAPH = 'microsoft_graph',
+}
 
 export class EmailConfigDto {
   constructor(partial?: Partial<EmailConfigDto>) {
@@ -24,6 +30,17 @@ export class EmailConfigDto {
   getEmailPassword(): string | undefined {
     return this.emailPassword;
   }
+
+  @ApiProperty({
+    description: 'Email provider type',
+    enum: EmailProviderType,
+    example: EmailProviderType.STANDARD,
+    default: EmailProviderType.STANDARD,
+  })
+  @IsEnum(EmailProviderType)
+  @IsOptional()
+  providerType?: EmailProviderType = EmailProviderType.STANDARD;
+
   @ApiProperty({ description: 'Email server host', example: 'smtp.gmail.com' })
   @IsString()
   @IsOptional()
@@ -83,4 +100,12 @@ export class EmailConfigDto {
   @IsBoolean()
   @IsOptional()
   pop3Enabled?: boolean;
+
+  @ApiProperty({
+    description: 'Whether Microsoft Graph (Outlook) is enabled',
+    example: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  microsoftGraphEnabled?: boolean;
 }
