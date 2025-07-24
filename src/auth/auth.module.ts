@@ -7,7 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { MicrosoftStrategy } from './strategies/microsoft.strategy';
+import { MicrosoftMsalStrategy } from './strategies/microsoft-msal.strategy';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { MicrosoftStrategy } from './strategies/microsoft.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, MicrosoftStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, MicrosoftMsalStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
