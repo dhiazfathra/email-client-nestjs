@@ -17,6 +17,7 @@ The Email Client NestJS application serves as a backend service for managing ema
 ## Technology Stack
 
 ### Core Technologies
+
 - **NestJS**: Progressive Node.js framework for building server-side applications
 - **TypeScript**: Typed superset of JavaScript
 - **Prisma**: Next-generation ORM for Node.js and TypeScript
@@ -24,24 +25,28 @@ The Email Client NestJS application serves as a backend service for managing ema
 - **Redis**: In-memory data structure store for caching
 
 ### Authentication & Security
+
 - **JWT**: JSON Web Tokens for authentication
 - **Passport**: Authentication middleware for Node.js
 - **Bcrypt**: Password hashing
 - **Crypto-JS**: Cryptographic functionality
 
 ### Email Protocols & APIs
+
 - **IMAP**: Internet Message Access Protocol for email retrieval
 - **POP3**: Post Office Protocol for email retrieval
 - **SMTP**: Simple Mail Transfer Protocol for sending emails
 - **Microsoft Graph API**: Microsoft's unified API for accessing Microsoft 365 services
 
 ### Monitoring & Observability
+
 - **OpenTelemetry**: Distributed tracing
 - **Jaeger**: End-to-end distributed tracing
 - **Prometheus**: Monitoring and alerting toolkit
 - **Grafana**: Observability and data visualization platform
 
 ### Development & DevOps
+
 - **Docker**: Containerization
 - **Kubernetes**: Container orchestration
 - **Jest**: Testing framework
@@ -70,6 +75,7 @@ The application follows a modular architecture based on NestJS's module system. 
 The application uses Prisma ORM with a PostgreSQL database. Key entities include:
 
 #### User
+
 - Personal information (name, email)
 - Authentication details (password)
 - Role-based access control (USER, ADMIN)
@@ -78,17 +84,19 @@ The application uses Prisma ORM with a PostgreSQL database. Key entities include
 - Soft delete support
 
 #### Email
+
 - Message metadata (from, to, cc, bcc, subject)
 - Content (text, HTML)
 - Status flags (read, flagged, deleted, spam, draft, sent)
 - Folder organization
 - Timestamps (received, sent, created, updated)
-- Attachments support
+- Attachment support
 - Soft delete support
 
 ## Key Features
 
 ### Email Management
+
 - **Multiple Protocol Support**: Retrieve emails via IMAP, POP3, or Microsoft Graph
 - **Email Sending**: Send emails via SMTP or Microsoft Graph
 - **Folder Organization**: Organize emails in folders
@@ -97,23 +105,27 @@ The application uses Prisma ORM with a PostgreSQL database. Key entities include
 - **Pagination**: Efficient retrieval of large email collections
 
 ### Authentication & Security
+
 - **JWT Authentication**: Secure token-based authentication
 - **Role-Based Access Control**: Different permissions for users and admins
 - **Password Hashing**: Secure storage of user credentials
 - **Rate Limiting**: Protection against abuse and DoS attacks
 
 ### Performance Optimization
+
 - **Redis Caching**: Improve performance and reduce database load
 - **Soft Delete**: Efficient handling of deleted records
 - **Database Indexing**: Optimized queries with strategic indexes
 
 ### Monitoring & Resilience
+
 - **Health Checks**: Monitor application health
 - **Distributed Tracing**: Track request flow through the system
 - **Metrics Collection**: Gather performance metrics
 - **Chaos Testing**: Test application resilience with fault injection
 
 ### Developer Experience
+
 - **API Documentation**: Swagger/OpenAPI and Scalar API Reference
 - **Testing**: Comprehensive unit and integration tests
 - **CI/CD**: Automated testing, building, and deployment
@@ -123,6 +135,7 @@ The application uses Prisma ORM with a PostgreSQL database. Key entities include
 ## Implementation Details
 
 ### Soft Delete Pattern
+
 The application implements a soft delete pattern for both users and emails. This allows "deleted" records to remain in the database but be excluded from normal queries. Implementation includes:
 
 - `isDeleted` boolean field on entities
@@ -131,6 +144,7 @@ The application implements a soft delete pattern for both users and emails. This
 - Query filters to exclude deleted records
 
 ### Microsoft Graph Integration
+
 The application integrates with Microsoft Graph API to provide:
 
 - Email retrieval from Microsoft 365/Outlook accounts
@@ -139,6 +153,7 @@ The application integrates with Microsoft Graph API to provide:
 - Detailed email content retrieval
 
 ### Caching Strategy
+
 Redis caching is implemented to improve performance:
 
 - Transparent caching with configurable TTL
@@ -147,6 +162,7 @@ Redis caching is implemented to improve performance:
 - Chaos testing for resilience when Redis fails
 
 ### Distributed Tracing
+
 OpenTelemetry and Jaeger are used for distributed tracing:
 
 - Request tracing across the application
@@ -157,11 +173,13 @@ OpenTelemetry and Jaeger are used for distributed tracing:
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register`: Register a new user
 - `POST /api/auth/login`: Login and get access token
 - `GET /api/auth/profile`: Get current user profile
 
 ### Email Management
+
 - `GET /email/config`: Get user email configuration
 - `POST /email/config`: Update user email configuration
 - `POST /email/send`: Send an email
@@ -173,6 +191,7 @@ OpenTelemetry and Jaeger are used for distributed tracing:
 - `PATCH /email/:id/move`: Move email to folder
 
 ### User Management
+
 - `GET /api/users`: Get all users (admin only)
 - `GET /api/users/:id`: Get user by ID
 - `PATCH /api/users/:id`: Update user
@@ -181,21 +200,27 @@ OpenTelemetry and Jaeger are used for distributed tracing:
 ## Development & Deployment
 
 ### Local Development
+
 The application supports local development with:
+
 - npm/yarn scripts for common tasks
 - Docker Compose for local dependencies
 - Environment configuration via .env files
 - Database migrations with Prisma
 
 ### Testing
+
 Comprehensive testing is implemented with:
+
 - Unit tests with Jest
 - Integration tests
 - Coverage reporting with Codecov
 - Automated testing in CI/CD pipeline
 
 ### Deployment
+
 The application can be deployed using:
+
 - Docker containers
 - Kubernetes manifests
 - CI/CD automation with GitHub Actions
