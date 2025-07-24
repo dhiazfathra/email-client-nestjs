@@ -11,7 +11,7 @@
     "@nestjs/config": "npm:@nestjs/config@4.0.2",
     "@nestjs/swagger": "npm:@nestjs/swagger@11.2.0",
     "@nestjs/throttler": "npm:@nestjs/throttler@6.4.0",
-    "@nestjs/cache-manager": "npm:@nestjs/cache-manager@2.2.0",
+    "@nestjs/cache-manager": "./src/cache/deno-cache-module-mock.ts",
     "@scalar/nestjs-api-reference": "npm:@scalar/nestjs-api-reference@0.5.11",
     "reflect-metadata": "npm:reflect-metadata@0.2.2",
     "rxjs": "npm:rxjs@7.8.2",
@@ -19,8 +19,9 @@
     "express": "npm:express@4.18.2",
     "bcrypt": "npm:bcrypt@5.1.1",
     "crypto": "node:crypto",
-    "cache-manager": "./src/cache/deno-cache-manager.ts",
-    "./src/cache/cache.service.ts": "./src/cache/deno-cache-service-mock.ts"
+    "cache-manager": "./src/cache/deno-cache-module-mock.ts",
+    "./src/cache/cache.service.ts": "./src/cache/deno-cache-module-mock.ts",
+    "./src/cache/cache.module.ts": "./src/cache/deno-cache-module-mock.ts"
   },
   "compilerOptions": {
     "emitDecoratorMetadata": true,
