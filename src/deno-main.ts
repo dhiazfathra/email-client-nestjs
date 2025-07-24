@@ -18,7 +18,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
 // Import application modules
-import { DenoAppModule } from './deno-app.module';
+import { DenoMinimalAppModule } from './deno-minimal-app.module';
 import { RateLimitGuard } from './common/guards/throttler.guard';
 import { CustomScalars } from './common/scalars/index';
 
@@ -42,7 +42,7 @@ const session = {
  */
 async function bootstrap() {
   // Create the NestJS application
-  const app = await NestFactory.create(DenoAppModule);
+  const app = await NestFactory.create(DenoMinimalAppModule);
   const _configService = app.get(ConfigService);
 
   // Enable CORS

@@ -4,18 +4,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { EmailModule } from './email/email.module';
-import { MicrosoftGraphModule } from './microsoft-graph/microsoft-graph.module';
-import { UsersModule } from './users/users.module';
-// Removed DenoCacheModule import to avoid cache-manager dependency issues
-// Import Deno-compatible modules only
-// Exclude modules that depend on Node.js-specific features like RedisCacheModule, PrismaModule, etc.
 
 /**
- * Main application module for Deno compatibility
- * This is a modified version of AppModule that uses DenoCacheService
- * and excludes Node.js-specific modules
+ * Minimal application module for Deno compatibility
+ * This is a stripped-down version that excludes all modules that might
+ * transitively import cache-manager or other Node.js-specific features
  */
 @Module({
   imports: [
@@ -23,9 +16,6 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-
-    // Cache configuration removed for Deno compatibility
-    // DenoCacheModule,
 
     // Rate limiting
     ThrottlerModule.forRootAsync({
@@ -39,11 +29,7 @@ import { UsersModule } from './users/users.module';
       ],
     }),
 
-    // Feature modules - only include Deno-compatible modules
-    AuthModule,
-    UsersModule,
-    EmailModule,
-    MicrosoftGraphModule,
+    // No feature modules to avoid potential cache-manager dependencies
   ],
   controllers: [AppController],
   providers: [
@@ -54,7 +40,7 @@ import { UsersModule } from './users/users.module';
     },
   ],
 })
-export class DenoAppModule implements NestModule {
+export class DenoMinimalAppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     // Add simplified middleware configuration for Deno
     // No metrics or tracing middleware for Deno version
