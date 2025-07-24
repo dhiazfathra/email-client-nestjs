@@ -1,0 +1,44 @@
+# Ignore Node.js specific files
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Ignore build output
+dist/
+build/
+coverage/
+
+# Ignore development files
+.vscode/
+.idea/
+.git/
+.github/
+.husky/
+
+# Ignore test files
+**/*.spec.ts
+**/*.test.ts
+test/
+
+# Ignore documentation
+docs/
+
+# Ignore Docker files
+Dockerfile
+docker-compose*.yaml
+docker-entrypoint.sh
+
+# Ignore Kubernetes files
+k8s/
+
+# Ignore monitoring files
+monitoring/
+
+# Ignore CI/CD files
+.github/
+.coderabbit.yaml
+codecov.yml
+.releaserc.json
+
+# Ignore misc files
+.DS_Store
