@@ -23,7 +23,6 @@ describe('EmailService Additional Tests', () => {
   let service: EmailService;
   let _prismaService: PrismaService;
 
-  // Create mock PrismaService
   const mockPrismaService = {
     user: {
       findUnique: jest.fn(),
