@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/dhiazfathra/email-client-nestjs/compare/v1.1.0...v1.2.0) (2025-07-24)
+
+
+### Features
+
+* integrate Microsoft Graph API for Outlook email support ([#5](https://github.com/dhiazfathra/email-client-nestjs/issues/5)) ([081420d](https://github.com/dhiazfathra/email-client-nestjs/commit/081420d308e146a5f88c2416d7a013b6248462c1))
+
 # [1.1.0](https://github.com/dhiazfathra/email-client-nestjs/compare/v1.0.0...v1.1.0) (2025-06-20)
 
 
