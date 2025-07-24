@@ -64,7 +64,7 @@
     "class-validator": "^0.14.2",
     "crypto-js": "^4.2.0",
     "dompurify": "^3.2.6",
-    "imap": "^0.8.19",
+    "imap": "^0.8.17",
     "jsdom": "^26.1.0",
     "mailparser": "^3.7.4",
     "nestjs-otel": "^7.0.0",
