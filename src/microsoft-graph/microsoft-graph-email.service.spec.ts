@@ -796,4 +796,331 @@ describe('MicrosoftGraphEmailService', () => {
       expect(mockGraphAuthService.getAuthenticatedClient).toHaveBeenCalled();
     });
   });
+
+  describe('saveEmailsToDatabase', () => {
+    it('should create new emails when they do not exist', async () => {
+      // Arrange
+      const userId = 'test-user-id';
+      const emails = [
+        {
+          messageId: 'email-1',
+          from: 'sender1@example.com',
+          to: ['recipient1@example.com'],
+          subject: 'Subject 1',
+          text: 'Content 1',
+          receivedAt: new Date(),
+          folder: 'inbox',
+        },
+        {
+          messageId: 'email-2',
+          from: 'sender2@example.com',
+          to: ['recipient2@example.com'],
+          subject: 'Subject 2',
+          text: 'Content 2',
+          receivedAt: new Date(),
+          folder: 'inbox',
+        },
+      ];
+
+      // Mock findFirst to return null (email doesn't exist)
+      mockPrismaService.email.findFirst.mockResolvedValue(null);
+
+      // Mock create to return the created email
+      mockPrismaService.email.create.mockImplementation((args) =>
+        Promise.resolve({ id: `db-${args.data.messageId}`, ...args.data }),
+      );
+
+      // Act
+      const result = await (service as any).saveEmailsToDatabase(
+        emails,
+        userId,
+      );
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('db-email-1');
+      expect(result[1].id).toBe('db-email-2');
+      expect(mockPrismaService.$transaction).toHaveBeenCalledTimes(2);
+    });
+
+    it('should update existing emails when they exist', async () => {
+      // Arrange
+      const userId = 'test-user-id';
+      const emails = [
+        {
+          messageId: 'email-1',
+          from: 'sender1@example.com',
+          to: ['recipient1@example.com'],
+          subject: 'Subject 1',
+          text: 'Content 1',
+          receivedAt: new Date(),
+          folder: 'inbox',
+          isRead: true,
+        },
+      ];
+
+      // Mock findFirst to return an existing email
+      const existingEmail = {
+        id: 'existing-email-id',
+        messageId: 'email-1',
+        from: 'sender1@example.com',
+        to: ['recipient1@example.com'],
+        subject: 'Subject 1',
+        text: 'Content 1',
+        folder: 'inbox',
+        isRead: false,
+        userId,
+      };
+
+      mockPrismaService.email.findFirst.mockResolvedValue(existingEmail);
+
+      // Mock update to return the updated email
+      mockPrismaService.email.update.mockImplementation((args) =>
+        Promise.resolve({ ...existingEmail, ...args.data }),
+      );
+
+      // Act
+      const result = await (service as any).saveEmailsToDatabase(
+        emails,
+        userId,
+      );
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('existing-email-id');
+      expect(result[0].isRead).toBe(true);
+      expect(mockPrismaService.email.update).toHaveBeenCalledWith({
+        where: { id: existingEmail.id },
+        data: expect.objectContaining({
+          isRead: true,
+        }),
+      });
+    });
+
+    it('should handle emails without messageId', async () => {
+      // Arrange
+      const userId = 'test-user-id';
+      const emails = [
+        {
+          // No messageId
+          from: 'sender@example.com',
+          to: ['recipient@example.com'],
+          subject: 'Subject',
+          text: 'Content',
+          receivedAt: new Date(),
+          folder: 'inbox',
+        },
+      ];
+
+      // Mock create to return the created email
+      mockPrismaService.email.create.mockImplementation((args) =>
+        Promise.resolve({ id: 'new-email-id', ...args.data }),
+      );
+
+      // Act
+      const result = await (service as any).saveEmailsToDatabase(
+        emails,
+        userId,
+      );
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('new-email-id');
+      expect(mockPrismaService.email.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          from: 'sender@example.com',
+          to: ['recipient@example.com'],
+          userId: userId,
+        }),
+      });
+      // Should not use transaction for emails without messageId
+      expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('should handle database errors gracefully', async () => {
+      // Arrange
+      const userId = 'test-user-id';
+      const emails = [
+        {
+          messageId: 'email-1',
+          from: 'sender@example.com',
+          to: ['recipient@example.com'],
+          subject: 'Subject',
+          text: 'Content',
+          receivedAt: new Date(),
+          folder: 'inbox',
+        },
+      ];
+
+      // Mock transaction to throw an error
+      mockPrismaService.$transaction.mockRejectedValue(
+        new Error('Database error'),
+      );
+
+      // Act & Assert
+      await expect(
+        (service as any).saveEmailsToDatabase(emails, userId),
+      ).rejects.toThrow('Failed to save emails to database: Database error');
+    });
+  });
+
+  describe('edge cases', () => {
+    describe('sendEmail edge cases', () => {
+      it('should handle emails with empty recipients arrays', async () => {
+        // Arrange
+        const userId = 'test-user-id';
+        const emailData: SendEmailDto = {
+          to: [],
+          subject: 'Test Subject',
+          text: 'Test Content',
+        };
+
+        const mockUser = {
+          id: userId,
+          emailUsername: 'sender@example.com',
+        };
+
+        mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+        mockPrismaService.email.create.mockImplementation((args) =>
+          Promise.resolve({ id: 'new-email-id', ...args.data }),
+        );
+        mockGraphClient.post.mockResolvedValue({});
+
+        // Act
+        const result = await service.sendEmail(userId, emailData);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(mockGraphClient.post).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: expect.objectContaining({
+              toRecipients: [],
+            }),
+          }),
+        );
+      });
+
+      it('should handle emails with HTML content but no text content', async () => {
+        // Arrange
+        const userId = 'test-user-id';
+        const emailData: SendEmailDto = {
+          to: ['recipient@example.com'],
+          subject: 'Test Subject',
+          html: '<p>HTML Only</p>',
+        };
+
+        const mockUser = {
+          id: userId,
+          emailUsername: 'sender@example.com',
+        };
+
+        mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+        mockPrismaService.email.create.mockImplementation((args) =>
+          Promise.resolve({ id: 'new-email-id', ...args.data }),
+        );
+        mockGraphClient.post.mockResolvedValue({});
+
+        // Act
+        const result = await service.sendEmail(userId, emailData);
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(mockGraphClient.post).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: expect.objectContaining({
+              body: {
+                contentType: 'HTML',
+                content: '<p>HTML Only</p>',
+              },
+            }),
+          }),
+        );
+        expect(mockPrismaService.email.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              html: '<p>HTML Only</p>',
+              text: undefined,
+            }),
+          }),
+        );
+      });
+    });
+
+    describe('fetchEmails edge cases', () => {
+      it('should handle empty response from Microsoft Graph', async () => {
+        // Arrange
+        const userId = 'test-user-id';
+        const options: GetEmailsDto = {
+          folder: 'inbox',
+          page: 1,
+          limit: 20,
+        };
+
+        const mockUser = {
+          id: userId,
+          emailUsername: 'user@example.com',
+        };
+
+        mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+        mockGraphClient.get
+          .mockResolvedValueOnce('0') // First call returns count of 0
+          .mockResolvedValueOnce({ value: [] }); // Second call returns empty array
+
+        // Mock the saveEmailsToDatabase method
+        jest
+          .spyOn(service as any, 'saveEmailsToDatabase')
+          .mockResolvedValue([]);
+        mockPrismaService.email.findMany.mockResolvedValue([]);
+
+        // Act
+        const result = await service.fetchEmails(userId, options);
+
+        // Assert
+        expect(result).toEqual({
+          emails: [],
+          total: 0,
+          hasMore: false,
+        });
+      });
+
+      it('should handle default values for missing options', async () => {
+        // Arrange
+        const userId = 'test-user-id';
+        const options = {}; // Empty options
+
+        const mockUser = {
+          id: userId,
+          emailUsername: 'user@example.com',
+        };
+
+        mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+        mockGraphClient.get
+          .mockResolvedValueOnce('10') // First call returns count
+          .mockResolvedValueOnce({ value: [] }); // Second call returns empty array
+
+        // Mock the saveEmailsToDatabase method
+        jest
+          .spyOn(service as any, 'saveEmailsToDatabase')
+          .mockResolvedValue([]);
+        mockPrismaService.email.findMany.mockResolvedValue([]);
+
+        // Act
+        const result = await service.fetchEmails(
+          userId,
+          options as GetEmailsDto,
+        );
+
+        // Assert
+        expect(result).toBeDefined();
+        expect(mockGraphClient.api).toHaveBeenCalledWith(
+          '/me/mailFolders/inbox/messages/$count',
+        );
+        expect(mockGraphClient.api).toHaveBeenCalledWith(
+          '/me/mailFolders/inbox/messages',
+        );
+        expect(mockGraphClient.top).toHaveBeenCalledWith(20);
+        expect(mockGraphClient.skip).toHaveBeenCalledWith(0);
+      });
+    });
+  });
 });
