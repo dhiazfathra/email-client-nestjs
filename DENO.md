@@ -35,6 +35,14 @@ deno task start
 deno task dev
 ```
 
+You can also run the application directly with the Deno CLI:
+
+```bash
+deno run --allow-net --allow-env --allow-read --unstable-sloppy-imports ./src/deno-main.ts
+```
+
+Note: The `--unstable-sloppy-imports` flag is required to handle imports without file extensions, which is common in Node.js/TypeScript projects but not standard in Deno.
+
 This will start a minimal version of the application that is compatible with Deno. Note that the Deno version uses a streamlined module structure that avoids certain Node.js-specific dependencies.
 
 ## Deployment to Deno Deploy
