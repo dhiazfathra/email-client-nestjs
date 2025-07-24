@@ -1,25 +1,24 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-// Define Cache type for Deno compatibility
-type Cache = {
-  get<T>(key: string): Promise<T | undefined>;
-  set<T>(key: string, value: T, ttl?: number): Promise<void>;
-  del(key: string): Promise<void>;
-  reset(): Promise<void>;
-};
-
+/**
+ * Deno-compatible cache service implementation
+ * This service provides a simple in-memory cache without relying on cache-manager
+ */
 @Injectable()
 export class DenoCacheService implements OnModuleInit {
   private readonly logger = new Logger(DenoCacheService.name);
   private isRedisEnabled = true;
   private chaosProbability = 0;
 
-  constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-    private readonly configService: ConfigService,
-  ) {}
+  // In-memory storage
+  private storage = new Map<
+    string,
+    { value: unknown; expires: number | null }
+  >();
+  private defaultTtl = 30; // Default TTL in seconds
+
+  constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit(): Promise<void> {
     this.chaosProbability = this.configService.get<number>(
@@ -41,7 +40,19 @@ export class DenoCacheService implements OnModuleInit {
     }
 
     try {
-      return await this.cacheManager.get<T>(key);
+      const item = this.storage.get(key);
+
+      if (!item) {
+        return undefined;
+      }
+
+      // Check if expired
+      if (item.expires && item.expires < Date.now()) {
+        this.storage.delete(key);
+        return undefined;
+      }
+
+      return item.value as T;
     } catch (error) {
       this.logger.error(`Failed to get cache key ${key}:`, error);
       return undefined;
@@ -57,7 +68,8 @@ export class DenoCacheService implements OnModuleInit {
     }
 
     try {
-      await this.cacheManager.set(key, value, ttl);
+      const expires = ttl ? Date.now() + ttl * 1000 : null;
+      this.storage.set(key, { value, expires });
     } catch (error) {
       this.logger.error(`Failed to set cache key ${key}:`, error);
     }
@@ -72,7 +84,7 @@ export class DenoCacheService implements OnModuleInit {
     }
 
     try {
-      await this.cacheManager.del(key);
+      this.storage.delete(key);
     } catch (error) {
       this.logger.error(`Failed to delete cache key ${key}:`, error);
     }
@@ -85,9 +97,50 @@ export class DenoCacheService implements OnModuleInit {
     }
 
     try {
-      await this.cacheManager.reset();
+      this.storage.clear();
     } catch (error) {
       this.logger.error('Failed to reset cache:', error);
     }
+  }
+
+  async getOrSet<T>(
+    key: string,
+    factory: () => Promise<T>,
+    ttl?: number,
+  ): Promise<T> {
+    if (!this.isRedisEnabled || this.shouldSimulateFailure()) {
+      this.logger.warn(
+        `[Chaos] Cache disabled, directly executing factory for key ${key}`,
+      );
+      return factory();
+    }
+
+    const cachedValue = await this.get<T>(key);
+
+    if (cachedValue !== undefined) {
+      return cachedValue;
+    }
+
+    try {
+      const newValue = await factory();
+      await this.set(key, newValue, ttl);
+      return newValue;
+    } catch (error) {
+      this.logger.error(
+        `Failed to execute factory function for cache key ${key}:`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async toggleRedis(enabled: boolean): Promise<void> {
+    this.isRedisEnabled = enabled;
+    this.logger.log(`Redis cache ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  async setChaosProbability(probability: number): Promise<void> {
+    this.chaosProbability = probability;
+    this.logger.log(`Set Redis chaos probability to ${probability}`);
   }
 }
