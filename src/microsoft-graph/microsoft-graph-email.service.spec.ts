@@ -520,19 +520,19 @@ describe('MicrosoftGraphEmailService', () => {
       ];
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockGraphClient.get.mockImplementation(() => {
-        // The path is not directly passed to the get method in the actual implementation
-        // Instead, we need to check what was passed to the api method
-        const apiCallArg =
-          mockGraphClient.api.mock.calls[
-            mockGraphClient.api.mock.calls.length - 1
-          ][0];
-        if (apiCallArg && apiCallArg.includes('$count')) {
-          return '50'; // Total count
-        } else {
-          return { value: mockGraphEmails };
-        }
-      });
+
+      // Mock the header method to return the client for chaining
+      mockGraphClient.header.mockReturnValue(mockGraphClient);
+
+      // Set up the mock implementation for the Graph client
+      mockGraphClient.get
+        .mockResolvedValueOnce('50') // First call returns count
+        .mockResolvedValueOnce({ value: mockGraphEmails }); // Second call returns emails
+
+      // Mock the saveEmailsToDatabase method
+      jest
+        .spyOn(service as any, 'saveEmailsToDatabase')
+        .mockResolvedValue(mockSavedEmails as Email[]);
       mockPrismaService.email.findMany.mockResolvedValue(
         mockSavedEmails as Email[],
       );
