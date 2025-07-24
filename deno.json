@@ -19,7 +19,8 @@
     "express": "npm:express@4.18.2",
     "bcrypt": "npm:bcrypt@5.1.1",
     "crypto": "node:crypto",
-    "cache-manager": "./src/cache/deno-cache-manager.ts"
+    "cache-manager": "./src/cache/deno-cache-manager.ts",
+    "./src/cache/cache.service.ts": "./src/cache/deno-cache-service-mock.ts"
   },
   "compilerOptions": {
     "emitDecoratorMetadata": true,
