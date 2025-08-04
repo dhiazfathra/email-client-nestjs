@@ -68,7 +68,7 @@
     "crypto-js": "^4.2.0",
     "dompurify": "^3.2.6",
     "express-session": "^1.18.2",
-    "imap": "^0.8.17",
+    "imap": "^0.8.19",
     "isomorphic-fetch": "^3.0.0",
     "jsdom": "^26.1.0",
     "mailparser": "^3.7.4",
