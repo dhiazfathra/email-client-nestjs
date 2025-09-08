@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 1  # Shallow clone for faster checkout
 
       - name: Setup Node.js 22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.x
           cache: 'npm'
@@ -150,7 +150,7 @@ jobs:
           fetch-depth: 1  # Shallow clone for faster checkout
 
       - name: Setup Node.js 22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.x
           cache: 'npm'
