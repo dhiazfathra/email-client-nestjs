@@ -103,13 +103,13 @@ jobs:
 
       # CodeQL Analysis for JavaScript/TypeScript
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: javascript, typescript
           queries: security-extended,security-and-quality
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:javascript"
 
@@ -199,7 +199,7 @@ jobs:
 
       # Upload ESLint SARIF results to GitHub Security tab
       - name: Upload ESLint SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: eslint-sarif.json
